@@ -18,7 +18,7 @@ This Open Knowledge Format bundle documents the concepts, prompts, data, impleme
 
 ## Bundle status
 
-The v5 automated audit is stopped at 34,389 of 44,142 conversations with zero recorded errors. The append-only output contains 34,389 unique, parseable conversation IDs with no duplicates. Automated screening has provisionally retrieved 5,185 clear or potential candidates. The latest fully reconciled reporting boundary is line 32,747: all 5,054 candidates through that boundary have been manually adjudicated exactly once; 131 later candidates await review. Manual campaign outcomes remain 280 clear, 4,622 potential, and 152 none, with the separate calibration record excluded. The current paper and appendices deliberately use the earlier frozen 33,346-record state and should be regenerated when a new reporting checkpoint is desired.
+The v5 automated audit is stopped at 34,389 of 44,142 conversations with zero recorded errors. The append-only output contains 34,389 unique, parseable conversation IDs with no duplicates. Automated screening provisionally retrieved 5,185 clear or potential candidates, all of which have now been manually adjudicated exactly once. Manual campaign outcomes are 299 clear, 4,719 potential, and 167 none; their level distribution is L0=167, L1=2,418, L2=1,943, L3=408, L4=166, and L5=83. The separate calibration record is excluded. The process figures report this fully reconciled boundary; the current paper and appendices remain deliberately frozen at the earlier 33,346-record state and should be regenerated when a new manuscript checkpoint is desired.
 
 ## Provenance
 

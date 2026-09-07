@@ -13,6 +13,7 @@ status: stable
 * [prepare_long_conversations.py](../../scripts/prepare_long_conversations.py) - Normalizes source corpora and selects ≥10×10 conversations.
 * [audit_long_conversations_gemma.py](../../scripts/audit_long_conversations_gemma.py) - Live v5 exhaustive audit, exact rubric, schemas, chunking, and post-processing.
 * [generate_process_diagram.py](../../scripts/generate_process_diagram.py) - Generates a current PRISMA-style Mermaid flow from the corpus, audit, errors, and manual-evidence files while excluding manual calibration records that were not automated candidates.
+* [apply_manual_decisions.py](../../scripts/apply_manual_decisions.py) - Validates a frozen pending-candidate set against staged one-by-one decisions and safely appends canonical records while refusing duplicate IDs or inconsistent label-level pairs.
 * [snapshot_resume_state.py](../../scripts/snapshot_resume_state.py) - Creates an integrity-checked, Git-ignored local archive of the production checkpoint, error ledger, canonical manual adjudications, and model identity lock.
 * [screen_long_conversations_gemma.py](../../scripts/screen_long_conversations_gemma.py) - Earlier short-context screening implementation; not the v5 production method.
 * [translate_appendix_conversations.py](../../scripts/translate_appendix_conversations.py) - Resumably translates every non-English manually clear L3–L5 conversation with local Gemma 4 26B under a strict full-fidelity prompt.
@@ -34,6 +35,8 @@ Generated corpus files are documented in [classification/README.md](../../classi
 * `gemma4_26b_a4b_audit_v5_extension_levels.jsonl` - Append-only live audit output.
 * `gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl` - Failures preserved for retry.
 * `results/prisma_process_diagram.md` - Regenerable current-state screening and review flow.
+* `results/prisma_process_diagram.svg` and `results/prisma_process_diagram.png` - Rendered versions of the current flow.
+* `paper/campaign_screening_process.png` - Compact manuscript-ready campaign flow generated from the same canonical state.
 
 # Manual evidence
 

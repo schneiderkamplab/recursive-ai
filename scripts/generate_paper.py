@@ -800,6 +800,7 @@ def _make_process_figure(campaign):
     regular = ImageFont.truetype(regular_path, 32)
     small = ImageFont.truetype(regular_path, 27)
     bold = ImageFont.truetype(bold_path, 37)
+    side_bold = ImageFont.truetype(bold_path, 29)
     title_font = ImageFont.truetype(bold_path, 49)
 
     def centered(text, rect, font, fill=INK, spacing=6):
@@ -815,10 +816,10 @@ def _make_process_figure(campaign):
             spacing=spacing,
         )
 
-    def box(rect, title, detail, *, fill=LIGHTER_BLUE, edge=BLUE):
+    def box(rect, title, detail, *, fill=LIGHTER_BLUE, edge=BLUE, heading_font=bold):
         draw.rounded_rectangle(rect, radius=24, fill=f"#{fill}", outline=f"#{edge}", width=4)
         x1, y1, x2, y2 = rect
-        centered(title, (x1 + 20, y1 + 22, x2 - 20, y1 + 95), bold)
+        centered(title, (x1 + 20, y1 + 22, x2 - 20, y1 + 95), heading_font)
         centered(detail, (x1 + 28, y1 + 92, x2 - 28, y2 - 18), regular, MUTED)
 
     def arrow(start, end):
@@ -856,7 +857,14 @@ def _make_process_figure(campaign):
         (side_x1, 1700, side_x2, 1920, "Awaiting Manual Review", f"n = {campaign['manual_pending']:,}"),
     ]
     for x1, y1, x2, y2, title, detail in side:
-        box((x1, y1, x2, y2), title, detail, fill="F2F4F7", edge=MUTED)
+        box(
+            (x1, y1, x2, y2),
+            title,
+            detail,
+            fill="F2F4F7",
+            edge=MUTED,
+            heading_font=side_bold,
+        )
 
     for upper, lower in zip(rows, rows[1:]):
         arrow(((main_x1 + main_x2) // 2, upper[1]), ((main_x1 + main_x2) // 2, lower[0]))
