@@ -19,10 +19,15 @@ raw/*
 !raw/README.md
 *.part
 
-# Normalized transcripts, automated classifications, human evidence records,
-# calibration outputs, and logs. Keep only the directory documentation.
+# Normalized transcripts, calibration outputs, and historical classifications.
+# The five canonical resume-state JSONLs are deliberate public exceptions.
 classification/*
 !classification/README.md
+!classification/gemma4_26b_a4b_audit_v5_extension_levels.jsonl
+!classification/gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl
+!classification/manually_reviewed_clear_examples.jsonl
+!classification/manually_reviewed_potential_examples.jsonl
+!classification/manually_reviewed_none_examples.jsonl
 
 # Generated tables, diagrams, workbooks, manuscripts, and QA renders.
 results/*

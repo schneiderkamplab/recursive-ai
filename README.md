@@ -2,9 +2,10 @@
 
 This repository contains the reproducible computational and qualitative method
 for studying recursive self-extension in public consumer–AI conversations. It
-does **not** contain source transcripts, normalized conversations, automated
-classifications, manual evidence records, model files, or generated research
-artifacts.
+also contains the canonical automated v5 audit and human-adjudication JSONLs so
+the campaign can be resumed without repeating completed computational or human
+work. It does **not** contain source transcripts, normalized conversations,
+model files, or generated research artifacts.
 
 The navigable project documentation starts at
 [`wiki/index.md`](wiki/index.md). It records the construct ontology, exact v5
@@ -90,9 +91,10 @@ ignored by Git.
 
 ## Preserve resumable research state
 
-The automated audit checkpoint and three canonical human-adjudication files are
-costly or impossible to reconstruct mechanically. Capture them in a local,
-Git-ignored archive with complete-line validation and SHA-256 checksums:
+The tracked automated audit checkpoint and three canonical human-adjudication
+files are costly or impossible to reconstruct mechanically. They can also be
+captured in a local, Git-ignored archive with complete-line validation and
+SHA-256 checksums:
 
 ```bash
 python snapshot_resume_state.py
@@ -107,10 +109,12 @@ itself remains outside Git.
 ## Data and credential policy
 
 Public conversation corpora can contain personal or sensitive material. Do not
-commit transcripts or record-level derivatives. Do not commit Hugging Face
-tokens, API keys, model blobs, runtime logs, or temporary review files. Use
-conversation IDs instead of usernames and avoid unnecessary quotation in
-research documentation.
+commit transcripts. The only tracked record-level derivatives are the named v5
+automated audit, error ledger, and three canonical manual-adjudication JSONLs in
+`classification/`. Do not commit other classification runs, Hugging Face tokens,
+API keys, model blobs, runtime logs, or temporary review files. Use conversation
+IDs instead of usernames and avoid unnecessary quotation in research
+documentation.
 
 ## Reproducibility limits
 

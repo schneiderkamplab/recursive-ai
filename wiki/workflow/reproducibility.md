@@ -65,4 +65,4 @@ The default output is `results/prisma_process_diagram.md`. Use `--output PATH` t
 
 # Reproducibility limits
 
-Deterministic temperature and seed reduce sampling variation but do not guarantee bit-identical results across Ollama, model quantization, runtime, hardware, or model-build changes. The Git repository deliberately excludes all conversation-level data and derived records. Recreating the qualitative findings therefore requires a fresh human adjudication or a separately governed evidence release.
+Deterministic temperature and seed reduce sampling variation but do not guarantee bit-identical results across Ollama, model quantization, runtime, hardware, or model-build changes. The Git repository excludes raw and normalized conversations but tracks the production automated checkpoint and canonical manual adjudications so completed computational and qualitative work can be resumed directly.

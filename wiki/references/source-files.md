@@ -39,7 +39,7 @@ Generated corpus files are documented in [classification/README.md](../../classi
 * `manually_reviewed_potential_examples.jsonl` - Lower-level and incomplete-chain candidates.
 * `manually_reviewed_none_examples.jsonl` - Hard negatives.
 
-All record-level production and manual-evidence files are local research data and are not tracked by Git.
+The production v5 audit, error ledger, and three canonical manual-evidence files are tracked to preserve campaign continuity. Raw and normalized transcripts, historical classifier outputs, calibrations, and runtime records remain excluded.
 
 # Superseded calibration outputs
 

@@ -25,9 +25,11 @@ same output. The agreed production ceiling is 60 GB RAM with four workers and
 four 131,072-token contexts.
 
 Never commit or reproduce raw transcripts, normalized conversations,
-classification JSONL, manual evidence JSONL, credentials, model blobs, logs,
-checkpoints, or generated artifacts. The `.gitignore` policy is deliberate.
-Use environment-scoped authentication and never echo tokens.
+credentials, model blobs, logs, temporary checkpoints, or generated artifacts.
+The production v5 audit, its error ledger, and the three canonical manual
+evidence JSONLs are deliberate tracked exceptions; no other classification
+JSONLs should be added. Use environment-scoped authentication and never echo
+tokens.
 
 Use `snapshot_resume_state.py` to preserve the live automated checkpoint and
 canonical manual adjudications outside Git. Treat the resulting archive as
