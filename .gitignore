@@ -38,10 +38,11 @@ outputs/
 runtime/
 resume_state/
 
-# Local-only workbook builder depends on the bundled Codex artifact runtime and
-# contains machine-specific paths; the portable CSV/JSON generator is tracked.
-build_turn_distribution_workbook.mjs
+# This optional workbook helper depends on the bundled Codex artifact runtime;
+# the portable CSV and JSON generator remains tracked.
+scripts/build_turn_distribution_workbook.mjs
 
 *.log
 *.docx
 *.xlsx
+paper/

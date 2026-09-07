@@ -47,27 +47,27 @@ python -m pip install -r requirements.txt
 1. Inspect and download the pinned source inventory:
 
    ```bash
-   python download_datasets.py --list
-   python download_datasets.py
+   python scripts/download_datasets.py --list
+   python scripts/download_datasets.py
    ```
 
 2. Compute the complete source turn distributions:
 
    ```bash
-   python analyze_turn_distributions.py
+   python scripts/analyze_turn_distributions.py
    ```
 
 3. Normalize records and retain conversations with at least ten user and ten
    assistant messages:
 
    ```bash
-   python prepare_long_conversations.py
+   python scripts/prepare_long_conversations.py
    ```
 
 4. Start Ollama with the required model available, then run the v5 audit:
 
    ```bash
-   python audit_long_conversations_gemma.py --model gemma4:26b --workers 4
+   python scripts/audit_long_conversations_gemma.py --model gemma4:26b --workers 4
    ```
 
    The production configuration uses four parallel 131,072-token contexts,
@@ -82,12 +82,32 @@ python -m pip install -r requirements.txt
 6. After manual evidence files exist, generate a current PRISMA-style flow:
 
    ```bash
-   python generate_process_diagram.py
+   python scripts/generate_process_diagram.py
    ```
 
 All generated paths are documented in `raw/README.md`,
 `classification/README.md`, and `results/README.md`. They are intentionally
 ignored by Git.
+
+## Generate the manuscript and evidence appendices
+
+The paper generator reads the live audit and canonical manual-review JSONLs at
+runtime, so campaign counts in the manuscript reflect the exact checkpoint used
+for generation. Complete clear L3, L4, and L5 conversations are written to
+separate appendices. Non-English conversations must first be translated locally
+with the same 26B Gemma model; the translation cache is resumable and ignored by
+Git.
+
+```bash
+python scripts/translate_appendix_conversations.py
+python scripts/generate_paper.py
+```
+
+Outputs are `paper/draft.docx`, `paper/appendix-l5.docx`,
+`paper/appendix-l4.docx`, and `paper/appendix-l3.docx`. Use `--draft-only` to
+regenerate only the manuscript or repeat `--appendix-level LEVEL` to select one
+or more of levels 3, 4, and 5. Generated Word files contain source transcripts
+and therefore stay outside Git.
 
 ## Preserve resumable research state
 
@@ -97,7 +117,7 @@ captured in a local, Git-ignored archive with complete-line validation and
 SHA-256 checksums:
 
 ```bash
-python snapshot_resume_state.py
+python scripts/snapshot_resume_state.py
 ```
 
 The archive is written under `resume_state/`, marked as record-level research

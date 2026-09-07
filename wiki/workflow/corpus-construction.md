@@ -7,7 +7,7 @@ generated: { by: codex/gpt-5, at: "2026-08-24T22:37:07Z" }
 status: stable
 sources:
   - id: preparation-script
-    resource: ../../prepare_long_conversations.py
+    resource: ../../scripts/prepare_long_conversations.py
     title: Corpus preparation implementation
   - id: corpus-manifest
     resource: ../../classification/long_conversations_manifest.json
@@ -20,7 +20,7 @@ A record is included when the source reports at least ten exchanges and normaliz
 
 # Reproducible download
 
-The four publicly obtainable source releases are downloaded by [download_datasets.py](../../download_datasets.py) into the exact `raw/` layout consumed by the preparation script. Downloads are pinned to full Hugging Face commit revisions, resume from `.part` files, and verify the expected byte size before atomic completion. The script uses Python's standard library; access tokens, when required, are read only from `HF_EPHEMERAL_TOKEN` or `HF_TOKEN`.
+The four publicly obtainable source releases are downloaded by [download_datasets.py](../../scripts/download_datasets.py) into the exact `raw/` layout consumed by the preparation script. Downloads are pinned to full Hugging Face commit revisions, resume from `.part` files, and verify the expected byte size before atomic completion. The script uses Python's standard library; access tokens, when required, are read only from `HF_EPHEMERAL_TOKEN` or `HF_TOKEN`.
 
 The RealUser source is the public 600-conversation preview, not the unavailable full 2.2-million-conversation corpus. LMSYS access can depend on the current upstream access policy and the user's acceptance of its dataset terms.
 

@@ -7,7 +7,7 @@ generated: { by: codex/gpt-5, at: "2026-08-24T22:37:07Z" }
 status: stable
 sources:
   - id: audit-script
-    resource: ../../audit_long_conversations_gemma.py
+    resource: ../../scripts/audit_long_conversations_gemma.py
     title: FIRST_SCHEMA, FOLLOW_SCHEMA, and normalization implementation
 ---
 

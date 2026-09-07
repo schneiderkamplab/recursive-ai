@@ -1,2 +1,4 @@
+Pillow==12.3.0
+langdetect==1.0.9
 pyarrow==22.0.0
-
+python-docx==1.2.0

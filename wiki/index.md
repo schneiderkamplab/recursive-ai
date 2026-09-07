@@ -18,7 +18,7 @@ This Open Knowledge Format bundle documents the concepts, prompts, data, impleme
 
 ## Bundle status
 
-The v5 automated audit is running with zero recorded errors. The latest fully reconciled reporting boundary is line 32,747: all 5,054 automated clear or potential candidates through that boundary have been manually adjudicated exactly once, and the process diagram is frozen there. Candidates generated after it await a later frozen review. Manual outcomes at the boundary are 280 clear, 4,622 potential, and 152 none; the separate calibration record is excluded. The ontology and production prompt remain unchanged, and corpus-wide counts remain incomplete.
+The v5 automated audit is paused at 33,346 of 44,142 conversations with zero recorded errors. The latest fully reconciled reporting boundary is line 32,747: all 5,054 automated clear or potential candidates through that boundary have been manually adjudicated exactly once. The 599 subsequently screened conversations add 54 candidates awaiting review. Manual outcomes remain 280 clear, 4,622 potential, and 152 none; the separate calibration record is excluded. Paper generation uses the frozen 33,346-record audit state, and corpus-wide counts remain incomplete.
 
 ## Provenance
 

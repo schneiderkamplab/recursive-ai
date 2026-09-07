@@ -9,12 +9,14 @@ status: stable
 
 # Executable methods
 
-* [download_datasets.py](../../download_datasets.py) - Downloads all four public source releases at pinned Hugging Face revisions, resumes partial transfers, and verifies expected byte sizes without persisting credentials.
-* [prepare_long_conversations.py](../../prepare_long_conversations.py) - Normalizes source corpora and selects ≥10×10 conversations.
-* [audit_long_conversations_gemma.py](../../audit_long_conversations_gemma.py) - Live v5 exhaustive audit, exact rubric, schemas, chunking, and post-processing.
-* [generate_process_diagram.py](../../generate_process_diagram.py) - Generates a current PRISMA-style Mermaid flow from the corpus, audit, errors, and manual-evidence files while excluding manual calibration records that were not automated candidates.
-* [snapshot_resume_state.py](../../snapshot_resume_state.py) - Creates an integrity-checked, Git-ignored local archive of the production checkpoint, error ledger, canonical manual adjudications, and model identity lock.
-* [screen_long_conversations_gemma.py](../../screen_long_conversations_gemma.py) - Earlier short-context screening implementation; not the v5 production method.
+* [download_datasets.py](../../scripts/download_datasets.py) - Downloads all four public source releases at pinned Hugging Face revisions, resumes partial transfers, and verifies expected byte sizes without persisting credentials.
+* [prepare_long_conversations.py](../../scripts/prepare_long_conversations.py) - Normalizes source corpora and selects ≥10×10 conversations.
+* [audit_long_conversations_gemma.py](../../scripts/audit_long_conversations_gemma.py) - Live v5 exhaustive audit, exact rubric, schemas, chunking, and post-processing.
+* [generate_process_diagram.py](../../scripts/generate_process_diagram.py) - Generates a current PRISMA-style Mermaid flow from the corpus, audit, errors, and manual-evidence files while excluding manual calibration records that were not automated candidates.
+* [snapshot_resume_state.py](../../scripts/snapshot_resume_state.py) - Creates an integrity-checked, Git-ignored local archive of the production checkpoint, error ledger, canonical manual adjudications, and model identity lock.
+* [screen_long_conversations_gemma.py](../../scripts/screen_long_conversations_gemma.py) - Earlier short-context screening implementation; not the v5 production method.
+* [translate_appendix_conversations.py](../../scripts/translate_appendix_conversations.py) - Resumably translates every non-English manually clear L3–L5 conversation with local Gemma 4 26B under a strict full-fidelity prompt.
+* [generate_paper.py](../../scripts/generate_paper.py) - Generates a campaign-state-aware manuscript, its process figure, and separate complete clear L3, L4, and L5 evidence appendices.
 
 # Model identity
 

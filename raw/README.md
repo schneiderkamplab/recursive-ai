@@ -1,6 +1,6 @@
 # Raw source data
 
-This directory is populated by `download_datasets.py` and is ignored by Git.
+This directory is populated by `scripts/download_datasets.py` and is ignored by Git.
 The expected layout is:
 
 ```text
@@ -11,6 +11,5 @@ raw/
 └── realuser_preview/  # ChatGPT-RealUser-2.2M-preview.csv
 ```
 
-Run `python download_datasets.py --list` to inspect the pinned revisions and
+Run `python scripts/download_datasets.py --list` to inspect the pinned revisions and
 expected sizes without downloading anything.
-
