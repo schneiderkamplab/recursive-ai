@@ -88,6 +88,22 @@ All generated paths are documented in `raw/README.md`,
 `classification/README.md`, and `results/README.md`. They are intentionally
 ignored by Git.
 
+## Preserve resumable research state
+
+The automated audit checkpoint and three canonical human-adjudication files are
+costly or impossible to reconstruct mechanically. Capture them in a local,
+Git-ignored archive with complete-line validation and SHA-256 checksums:
+
+```bash
+python snapshot_resume_state.py
+```
+
+The archive is written under `resume_state/`, marked as record-level research
+data, and must be transferred only through an appropriately governed private
+storage channel. It also includes the tracked Gemma build identity lock at
+`model-locks/gemma4-26b-ollama.lock.json`; the approximately 18 GB model blob
+itself remains outside Git.
+
 ## Data and credential policy
 
 Public conversation corpora can contain personal or sensitive material. Do not
@@ -103,4 +119,3 @@ reproducibility but cannot guarantee bit-identical output across different
 Ollama versions, quantizations, model builds, or hardware. Manual adjudication
 is an interpretive research stage and must be documented separately from the
 automated retrieval instrument.
-

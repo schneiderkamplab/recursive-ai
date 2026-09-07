@@ -29,9 +29,13 @@ classification JSONL, manual evidence JSONL, credentials, model blobs, logs,
 checkpoints, or generated artifacts. The `.gitignore` policy is deliberate.
 Use environment-scoped authentication and never echo tokens.
 
+Use `snapshot_resume_state.py` to preserve the live automated checkpoint and
+canonical manual adjudications outside Git. Treat the resulting archive as
+record-level research data. The tracked model lock identifies the exact Gemma
+build, but does not contain or distribute the model blob.
+
 For manual review, read the entire conversation, inspect all topic segments,
 reconstruct one coherent evidence chain with U#/A# labels, distinguish artifact
 revision from self-representation, and avoid inferring sensitive attributes.
 Follow `wiki/workflow/manual-review.md` and record material methodological
 changes in `wiki/log.md`.
-

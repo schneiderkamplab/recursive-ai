@@ -47,6 +47,14 @@ The default output and error paths are documented in [source files](/references/
 
 Use repeatable `--id CONVERSATION_ID` arguments and separate `--output` and `--errors` paths when testing cases. Do not reuse the production output for prompt experiments.
 
+# Preserve a resume checkpoint
+
+```bash
+python snapshot_resume_state.py
+```
+
+This captures complete JSON lines from the live production output and the three canonical manual-adjudication files, records SHA-256 checksums, and includes the exact Gemma model identity lock. The resulting `resume_state/*.tar.gz` archive is record-level research data, is ignored by Git, and must not be published through the public repository. The model blob itself must be retained or reacquired separately and verified against the lock.
+
 # Generate the current process diagram
 
 ```bash

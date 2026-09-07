@@ -13,7 +13,12 @@ status: stable
 * [prepare_long_conversations.py](../../prepare_long_conversations.py) - Normalizes source corpora and selects ≥10×10 conversations.
 * [audit_long_conversations_gemma.py](../../audit_long_conversations_gemma.py) - Live v5 exhaustive audit, exact rubric, schemas, chunking, and post-processing.
 * [generate_process_diagram.py](../../generate_process_diagram.py) - Generates a current PRISMA-style Mermaid flow from the corpus, audit, errors, and manual-evidence files while excluding manual calibration records that were not automated candidates.
+* [snapshot_resume_state.py](../../snapshot_resume_state.py) - Creates an integrity-checked, Git-ignored local archive of the production checkpoint, error ledger, canonical manual adjudications, and model identity lock.
 * [screen_long_conversations_gemma.py](../../screen_long_conversations_gemma.py) - Earlier short-context screening implementation; not the v5 production method.
+
+# Model identity
+
+* [gemma4-26b-ollama.lock.json](../../model-locks/gemma4-26b-ollama.lock.json) - Exact manifest and layer digests for the local Gemma build used by v5. The model blob is not stored in Git.
 
 # Corpus
 
