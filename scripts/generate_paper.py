@@ -101,8 +101,13 @@ def _display_chunks(text, maximum=20_000):
 
 def _set_run(run, *, size=11, bold=False, italic=False, color=INK, font="Aptos"):
     run.font.name = font
-    run._element.get_or_add_rPr().rFonts.set(qn("w:ascii"), font)
-    run._element.get_or_add_rPr().rFonts.set(qn("w:hAnsi"), font)
+    run_fonts = run._element.get_or_add_rPr().rFonts
+    run_fonts.set(qn("w:ascii"), font)
+    run_fonts.set(qn("w:hAnsi"), font)
+    # Explicitly select a broad Unicode face for East Asian glyphs.  Without
+    # this, LibreOffice's DOCX renderer can retain Latin tokens such as
+    # “ChatGPT” while silently dropping the surrounding CJK source text.
+    run_fonts.set(qn("w:eastAsia"), "Arial Unicode MS")
     run.font.size = Pt(size)
     run.font.bold = bold
     run.font.italic = italic
@@ -255,6 +260,7 @@ def _configure_document(doc):
     normal.font.name = "Aptos"
     normal._element.rPr.rFonts.set(qn("w:ascii"), "Aptos")
     normal._element.rPr.rFonts.set(qn("w:hAnsi"), "Aptos")
+    normal._element.rPr.rFonts.set(qn("w:eastAsia"), "Arial Unicode MS")
     normal.font.size = Pt(11)
     normal.font.color.rgb = _rgb(INK)
     normal.paragraph_format.space_before = Pt(0)
@@ -616,7 +622,9 @@ def _add_full_transcript(doc, case_number, record, review, translation_record=No
             row = table.add_row()
             fill = LIGHT_BLUE if role == "user" else LIGHTER_BLUE
             label_color = DARK_BLUE if role == "user" else MUTED
-            for cell, text in zip(row.cells, [_word_safe_text(message.get("content", "")), _word_safe_text(translation)]):
+            for column_index, (cell, text) in enumerate(
+                zip(row.cells, [_word_safe_text(message.get("content", "")), _word_safe_text(translation)])
+            ):
                 _shade(cell, fill)
                 _set_cell_margins(cell, top=120, start=140, bottom=120, end=140)
                 cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.TOP
@@ -631,7 +639,12 @@ def _add_full_transcript(doc, case_number, record, review, translation_record=No
                 body.paragraph_format.line_spacing = 1.12
                 body.paragraph_format.widow_control = True
                 body.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                _set_run(body.add_run(text), size=8.75, color=INK)
+                _set_run(
+                    body.add_run(text),
+                    size=8.75,
+                    color=INK,
+                    font="Arial Unicode MS" if column_index == 0 else "Aptos",
+                )
         _set_table_geometry(table, [4680, 4680])
         truncated_source_notes = {
             "118ea59bc07477688fe6e093": (
