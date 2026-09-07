@@ -1,0 +1,42 @@
+# Credentials and local configuration
+.env
+.env.*
+!.env.example
+
+# Python and editor state
+__pycache__/
+*.py[cod]
+.venv/
+.idea/
+.vscode/
+.DS_Store
+
+# Local dependency/runtime links
+node_modules
+
+# Downloaded source data. Keep only the directory documentation.
+raw/*
+!raw/README.md
+*.part
+
+# Normalized transcripts, automated classifications, human evidence records,
+# calibration outputs, and logs. Keep only the directory documentation.
+classification/*
+!classification/README.md
+
+# Generated tables, diagrams, workbooks, manuscripts, and QA renders.
+results/*
+!results/README.md
+outputs/
+
+# Ephemeral audit/review checkpoints and one-off record application scripts.
+runtime/
+
+# Local-only workbook builder depends on the bundled Codex artifact runtime and
+# contains machine-specific paths; the portable CSV/JSON generator is tracked.
+build_turn_distribution_workbook.mjs
+
+*.log
+*.docx
+*.xlsx
+
