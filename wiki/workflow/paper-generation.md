@@ -38,11 +38,28 @@ Single-item retries use a plain-text response with explicit source-data delimite
 which prevents the model from treating embedded requests as instructions or
 echoing the batch schema. The pipeline rejects implausible translation expansion
 and schema-commentary artifacts and retries failed records from the resumable
-cache. The ignored cache records source language, model provenance, a SHA-256 hash of
-the complete source-message array, and one translation per original message.
-The paper generator rejects stale hashes, wrong turn counts, empty translated
-turns, and records not produced by a 26B model. Translation failures are written
-to a separate ignored JSONL and remain eligible for a later resumable run.
+cache. The ignored cache is JSONL with one complete conversation record per
+line. Each record contains the conversation ID, source language, model
+provenance, a SHA-256 hash of the complete source-message array, and one
+translation per original message. A newly completed conversation is appended
+and flushed to disk. Replacing, repairing, or invalidating an existing
+translation triggers an atomic full-file rewrite, which also compacts any prior
+duplicate IDs. A final partial line from an interrupted append is ignored on
+recovery.
+
+A dedicated advisory data lock protects every read, append, migration, and
+rewrite. Readers, including the paper generator, take a shared lock; writers
+take an exclusive lock. A second nonblocking run lock prevents two translator
+processes from generating the same pending work concurrently. Locks are held
+only for cache access rather than during model inference, so appendix generation
+can read completed translations while a long translation run continues.
+
+The current keyed JSON cache migrates automatically and losslessly to JSONL on
+the first translator invocation; the legacy JSON remains as a local safety copy
+but is ignored once JSONL exists. The paper generator rejects stale hashes,
+wrong turn counts, empty translated turns, and records not produced by a 26B
+model. Translation failures are written to a separate ignored JSONL and remain
+eligible for a later resumable run.
 
 # Outputs
 

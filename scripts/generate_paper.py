@@ -15,6 +15,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
+from translate_appendix_conversations import load_translations
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,7 +33,6 @@ MANUAL_PATHS = {
     label: ROOT / "classification" / f"manually_reviewed_{label}_examples.jsonl"
     for label in ("clear", "potential", "none")
 }
-TRANSLATIONS_PATH = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.json"
 APPENDIX_CACHE_DIR = OUTDIR / ".appendix-cache"
 # Increment this when appendix case rendering or formatting changes in a way
 # that is not already represented by the conversation/review/translation data.
@@ -492,12 +492,6 @@ def _load_conversations(conversation_ids):
     if missing:
         raise RuntimeError(f"Missing conversations: {', '.join(sorted(missing))}")
     return records
-
-
-def _load_translations():
-    if not TRANSLATIONS_PATH.exists():
-        return {}
-    return json.loads(TRANSLATIONS_PATH.read_text(encoding="utf-8"))
 
 
 def _validate_translation_record(conversation, translation_record):
@@ -1458,7 +1452,7 @@ def build_appendix(
         conversation_id: conversations[conversation_id]
         for conversation_id in review_by_id
     }
-    translations = _load_translations() if translations is None else translations
+    translations = load_translations() if translations is None else translations
     missing_translations = [
         conversation_id
         for conversation_id, conversation in conversations.items()
@@ -1591,7 +1585,7 @@ def main():
             for review in reviews
         }
         conversations = _load_conversations(all_conversation_ids)
-        translations = _load_translations()
+        translations = load_translations()
         for level in levels:
             build_appendix(
                 level,

@@ -95,8 +95,9 @@ The paper generator reads the live audit and canonical manual-review JSONLs at
 runtime, so campaign counts in the manuscript reflect the exact checkpoint used
 for generation. Complete clear L3, L4, and L5 conversations are written to
 separate appendices. Non-English conversations must first be translated locally
-with the same 26B Gemma model; the translation cache is resumable and ignored by
-Git.
+with the same 26B Gemma model. Its ignored JSONL cache appends newly translated
+conversations, atomically rewrites the file when an existing translation changes,
+and uses advisory read/write and single-translator locks.
 
 ```bash
 python scripts/translate_appendix_conversations.py

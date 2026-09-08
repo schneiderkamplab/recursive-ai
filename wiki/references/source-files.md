@@ -16,7 +16,7 @@ status: stable
 * [apply_manual_decisions.py](../../scripts/apply_manual_decisions.py) - Validates a frozen pending-candidate set against staged one-by-one decisions and safely appends canonical records while refusing duplicate IDs or inconsistent label-level pairs.
 * [snapshot_resume_state.py](../../scripts/snapshot_resume_state.py) - Creates an integrity-checked, Git-ignored local archive of the production checkpoint, error ledger, canonical manual adjudications, and model identity lock.
 * [screen_long_conversations_gemma.py](../../scripts/screen_long_conversations_gemma.py) - Earlier short-context screening implementation; not the v5 production method.
-* [translate_appendix_conversations.py](../../scripts/translate_appendix_conversations.py) - Resumably translates every non-English manually clear L3–L5 conversation with local Gemma 4 26B under a strict full-fidelity prompt.
+* [translate_appendix_conversations.py](../../scripts/translate_appendix_conversations.py) - Resumably translates every non-English manually clear L3–L5 conversation with local Gemma 4 26B under a strict full-fidelity prompt, using a locked JSONL cache with append-new and rewrite-changed semantics.
 * [generate_paper.py](../../scripts/generate_paper.py) - Generates a campaign-state-aware manuscript, its process figure, and separate complete clear L3, L4, and L5 evidence appendices with document-level no-op detection and conversation-level incremental Word-fragment caching.
 
 # Model identity

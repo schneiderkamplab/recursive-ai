@@ -4,14 +4,17 @@
 from __future__ import annotations
 
 import argparse
+import fcntl
 import gzip
 import hashlib
 import json
+import os
 import re
 import time
 import urllib.error
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -21,7 +24,10 @@ from langdetect import DetectorFactory, LangDetectException, detect_langs
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "classification" / "long_conversations_10x10.jsonl.gz"
 CLEAR = ROOT / "classification" / "manually_reviewed_clear_examples.jsonl"
-OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.json"
+OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.jsonl"
+LEGACY_OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.json"
+LOCK_OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.lock"
+RUN_LOCK_OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.run.lock"
 ERROR_OUTPUT = ROOT / "runtime" / "appendix_translations_all_gemma4_26b_errors.jsonl"
 ENGLISH_LABELS = {"english", "unknown", ""}
 # Smaller translation units keep dense CJK and code-heavy passages well below
@@ -32,6 +38,8 @@ MAX_BATCH_ITEMS = 8
 MAX_TRANSLATION_EXPANSION = 7
 MIN_TRANSLATION_CHARACTER_LIMIT = 240
 DetectorFactory.seed = 20260907
+
+__all__ = ["load_translations"]
 
 
 def _read_jsonl(path: Path) -> list[dict]:
@@ -248,18 +256,121 @@ def _request(url: str, model: str, language: str, batch: list[dict]) -> list[str
     raise RuntimeError(f"Translation request failed after retries: {last_error}")
 
 
-def _load_completed() -> dict[str, dict]:
+@contextmanager
+def _cache_lock(*, exclusive: bool):
+    LOCK_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    with LOCK_OUTPUT.open("a+", encoding="utf-8") as lock_file:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX if exclusive else fcntl.LOCK_SH)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
+@contextmanager
+def _translation_run_lock():
+    RUN_LOCK_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    with RUN_LOCK_OUTPUT.open("a+", encoding="utf-8") as lock_file:
+        try:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as error:
+            raise RuntimeError("Another appendix translation process already holds the run lock") from error
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+
+
+def _decode_jsonl_record(payload: dict) -> tuple[str, dict]:
+    conversation_id = payload.get("conversation_id")
+    if not isinstance(conversation_id, str) or not conversation_id:
+        raise ValueError("Translation-cache record lacks a conversation_id")
+    translation = dict(payload)
+    del translation["conversation_id"]
+    return conversation_id, translation
+
+
+def _read_completed_unlocked() -> dict[str, dict]:
     completed = {}
     if OUTPUT.exists():
-        completed.update(json.loads(OUTPUT.read_text(encoding="utf-8")))
+        lines = OUTPUT.read_text(encoding="utf-8").splitlines(keepends=True)
+        for line_number, line in enumerate(lines, 1):
+            if not line.strip():
+                continue
+            try:
+                conversation_id, translation = _decode_jsonl_record(json.loads(line))
+            except (json.JSONDecodeError, ValueError) as error:
+                if line_number == len(lines) and not line.endswith("\n"):
+                    break
+                raise RuntimeError(
+                    f"Invalid translation-cache JSONL at line {line_number}: {error}"
+                ) from error
+            completed[conversation_id] = translation
+        return completed
+    if LEGACY_OUTPUT.exists():
+        legacy = json.loads(LEGACY_OUTPUT.read_text(encoding="utf-8"))
+        if not isinstance(legacy, dict):
+            raise RuntimeError("Legacy translation cache is not a keyed JSON object")
+        completed.update(legacy)
     return completed
 
 
-def _save(completed: dict[str, dict]) -> None:
+def load_translations() -> dict[str, dict]:
+    """Read a consistent translation snapshot under a shared advisory lock."""
+    with _cache_lock(exclusive=False):
+        return _read_completed_unlocked()
+
+
+def _encoded_cache_record(conversation_id: str, translation: dict) -> str:
+    payload = {"conversation_id": conversation_id, **translation}
+    return json.dumps(payload, ensure_ascii=False, separators=(",", ":")) + "\n"
+
+
+def _rewrite_completed_unlocked(completed: dict[str, dict]) -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    temporary = OUTPUT.with_suffix(".tmp")
-    temporary.write_text(json.dumps(completed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temporary.replace(OUTPUT)
+    temporary = OUTPUT.with_name(f".{OUTPUT.name}.{os.getpid()}.tmp")
+    try:
+        with temporary.open("w", encoding="utf-8") as destination:
+            for conversation_id in sorted(completed):
+                destination.write(_encoded_cache_record(conversation_id, completed[conversation_id]))
+            destination.flush()
+            os.fsync(destination.fileno())
+        temporary.replace(OUTPUT)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _migrate_legacy_cache() -> int:
+    with _cache_lock(exclusive=True):
+        if OUTPUT.exists() or not LEGACY_OUTPUT.exists():
+            return 0
+        completed = _read_completed_unlocked()
+        _rewrite_completed_unlocked(completed)
+        return len(completed)
+
+
+def _rewrite_completed(completed: dict[str, dict]) -> None:
+    with _cache_lock(exclusive=True):
+        _rewrite_completed_unlocked(completed)
+
+
+def _store_translation(conversation_id: str, translation: dict) -> str:
+    """Append a new record; atomically rewrite only when replacing an existing one."""
+    with _cache_lock(exclusive=True):
+        completed = _read_completed_unlocked()
+        existing = completed.get(conversation_id)
+        if existing == translation:
+            return "unchanged"
+        if existing is None and (OUTPUT.exists() or not LEGACY_OUTPUT.exists()):
+            OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+            with OUTPUT.open("a", encoding="utf-8") as destination:
+                destination.write(_encoded_cache_record(conversation_id, translation))
+                destination.flush()
+                os.fsync(destination.fileno())
+            return "appended"
+        completed[conversation_id] = translation
+        _rewrite_completed_unlocked(completed)
+        return "rewritten"
 
 
 def _record_error(record: dict, error: Exception) -> None:
@@ -338,6 +449,13 @@ def _invalidate_unfaithful_outputs(
         source = records_by_id.get(conversation_id)
         if source is None:
             continue
+        expected_hash = hashlib.sha256(
+            json.dumps(source["messages"], ensure_ascii=False, separators=(",", ":")).encode()
+        ).hexdigest()
+        if translation_record.get("source_sha256") != expected_hash:
+            invalid.append(conversation_id)
+            del completed[conversation_id]
+            continue
         translations = translation_record.get("translations") or []
         if len(translations) != len(source["messages"]):
             invalid.append(conversation_id)
@@ -376,86 +494,91 @@ def main() -> None:
     parser.add_argument("--limit", type=int)
     args = parser.parse_args()
 
-    records = _target_records()
-    completed = _load_completed()
-    repaired = _repair_english_passthrough(records, completed)
-    invalidated = _invalidate_unfaithful_outputs(records, completed)
-    if repaired or invalidated:
-        _save(completed)
-    if invalidated:
-        print(
-            json.dumps(
-                {
-                    "unfaithful_translation_records_invalidated": len(invalidated),
-                    "conversation_ids": sorted(invalidated),
-                }
-            ),
-            flush=True,
-        )
-    if repaired:
-        print(json.dumps({"english_passthrough_records_repaired": repaired}), flush=True)
-    complete_count = sum(record["id"] in completed for record in records)
-    pending = [record for record in records if record["id"] not in completed]
-    if args.limit is not None:
-        pending = pending[: args.limit]
-    print(
-        json.dumps(
-            {
-                "target_conversations": len(records),
-                "already_complete": complete_count,
-                "pending": len(pending),
-            }
-        ),
-        flush=True,
-    )
-
     if args.workers < 1:
         parser.error("--workers must be at least 1")
     if args.max_batch_items < 1:
         parser.error("--max-batch-items must be at least 1")
-    with ThreadPoolExecutor(max_workers=args.workers) as executor:
-        futures = {
-            executor.submit(
-                _translate_record,
-                record,
-                url=args.url,
-                model=args.model,
-                max_batch_items=args.max_batch_items,
-            ): record
-            for record in pending
-        }
-        for number, future in enumerate(as_completed(futures), 1):
-            record = futures[future]
-            try:
-                translated = future.result()
-            except Exception as error:
-                _record_error(record, error)
-                print(
-                    json.dumps(
-                        {
-                            "failed_now": number,
-                            "pending_this_run": len(pending),
-                            "conversation_id": record["id"],
-                            "language": record["language"],
-                            "error": str(error),
-                        }
-                    ),
-                    flush=True,
-                )
-                continue
-            completed[record["id"]] = translated
-            _save(completed)
+    with _translation_run_lock():
+        migrated = _migrate_legacy_cache()
+        if migrated:
+            print(json.dumps({"legacy_records_migrated_to_jsonl": migrated}), flush=True)
+        records = _target_records()
+        completed = load_translations()
+        repaired = _repair_english_passthrough(records, completed)
+        invalidated = _invalidate_unfaithful_outputs(records, completed)
+        if repaired or invalidated:
+            _rewrite_completed(completed)
+        if invalidated:
             print(
                 json.dumps(
                     {
-                        "completed_now": number,
-                        "pending_this_run": len(pending),
-                        "conversation_id": record["id"],
-                        "language": record["language"],
+                        "translation_records_invalidated": len(invalidated),
+                        "conversation_ids": sorted(invalidated),
                     }
                 ),
                 flush=True,
             )
+        if repaired:
+            print(json.dumps({"english_passthrough_records_repaired": repaired}), flush=True)
+        complete_count = sum(record["id"] in completed for record in records)
+        pending = [record for record in records if record["id"] not in completed]
+        if args.limit is not None:
+            pending = pending[: args.limit]
+        print(
+            json.dumps(
+                {
+                    "target_conversations": len(records),
+                    "already_complete": complete_count,
+                    "pending": len(pending),
+                }
+            ),
+            flush=True,
+        )
+
+        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+            futures = {
+                executor.submit(
+                    _translate_record,
+                    record,
+                    url=args.url,
+                    model=args.model,
+                    max_batch_items=args.max_batch_items,
+                ): record
+                for record in pending
+            }
+            for number, future in enumerate(as_completed(futures), 1):
+                record = futures[future]
+                try:
+                    translated = future.result()
+                except Exception as error:
+                    _record_error(record, error)
+                    print(
+                        json.dumps(
+                            {
+                                "failed_now": number,
+                                "pending_this_run": len(pending),
+                                "conversation_id": record["id"],
+                                "language": record["language"],
+                                "error": str(error),
+                            }
+                        ),
+                        flush=True,
+                    )
+                    continue
+                write_mode = _store_translation(record["id"], translated)
+                completed[record["id"]] = translated
+                print(
+                    json.dumps(
+                        {
+                            "completed_now": number,
+                            "pending_this_run": len(pending),
+                            "conversation_id": record["id"],
+                            "language": record["language"],
+                            "cache_write": write_mode,
+                        }
+                    ),
+                    flush=True,
+                )
 
 
 if __name__ == "__main__":
