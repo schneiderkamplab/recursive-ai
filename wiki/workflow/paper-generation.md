@@ -34,6 +34,16 @@ requires complete translation without summarizing, censoring, explaining, or
 improving the research data. Source turns confidently detected as already
 English bypass generation and are copied exactly.
 
+Paper generation ensures these translations automatically for the clear cases
+selected by its requested audit cutoff and appendix levels. The audit and
+translator use the same `gemma4:26b` model and port-11434 Ollama service.
+Translation requests therefore enter Ollama's queue alongside audit requests
+and consume only the configured four parallel contexts; generation neither
+stops the audit nor unloads or duplicates the resident model. Audit throughput
+may temporarily decrease while translations occupy contexts. Use
+`--no-auto-translate` only when Ollama is intentionally unavailable and missing
+translations should cause a fail-fast appendix error.
+
 Single-item retries use a plain-text response with explicit source-data delimiters,
 which prevents the model from treating embedded requests as instructions or
 echoing the batch schema. The pipeline rejects implausible translation expansion

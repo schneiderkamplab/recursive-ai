@@ -38,11 +38,14 @@ build, but does not contain or distribute the model blob.
 
 Executable utilities live under `scripts/`. `scripts/generate_paper.py` derives
 manuscript counts from the current campaign state and creates separate clear
-L3–L5 evidence appendices. Translate all non-English appendix conversations
-with local `gemma4:26b` through
-`scripts/translate_appendix_conversations.py`; preserve its resumable cache
-outside Git and do not substitute a smaller translation model without explicit
-approval.
+L3–L5 evidence appendices. It automatically requests any missing non-English
+translations from the existing Ollama service with local `gemma4:26b` while the
+audit continues; Ollama queues both workloads within the four-context ceiling,
+so do not stop the audit or unload the shared model merely for translation.
+Preserve the resumable translation cache outside Git and do not substitute a
+smaller translation model without explicit approval. Use
+`scripts/translate_appendix_conversations.py` directly only for translation-only
+runs or repairs.
 
 For manual review, read the entire conversation, inspect all topic segments,
 reconstruct one coherent evidence chain with U#/A# labels, distinguish artifact

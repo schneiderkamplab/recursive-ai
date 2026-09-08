@@ -15,7 +15,8 @@ Executable research utilities live here.
   JSONL translation cache for non-English clear L3 through L5 evidence. New
   records append; changed records trigger an atomic compacting rewrite.
 - `generate_paper.py` creates the live manuscript, figures, and separate L3,
-  L4, and L5 appendices. It incrementally caches conversation-level Word XML,
+  L4, and L5 appendices. It automatically queues missing translations on the
+  existing Ollama service, incrementally caches conversation-level Word XML,
   skips unchanged appendix outputs, and selectively rebuilds invalidated cases.
 
 ## Historical instruments

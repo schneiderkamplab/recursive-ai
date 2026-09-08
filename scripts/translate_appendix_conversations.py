@@ -39,7 +39,17 @@ MAX_TRANSLATION_EXPANSION = 7
 MIN_TRANSLATION_CHARACTER_LIMIT = 240
 DetectorFactory.seed = 20260907
 
-__all__ = ["load_translations"]
+DEFAULT_TRANSLATION_URL = "http://127.0.0.1:11434/api/generate"
+DEFAULT_TRANSLATION_MODEL = "gemma4:26b"
+DEFAULT_TRANSLATION_WORKERS = 4
+
+__all__ = [
+    "DEFAULT_TRANSLATION_MODEL",
+    "DEFAULT_TRANSLATION_URL",
+    "DEFAULT_TRANSLATION_WORKERS",
+    "ensure_translations",
+    "load_translations",
+]
 
 
 def _read_jsonl(path: Path) -> list[dict]:
@@ -485,24 +495,52 @@ def _invalidate_unfaithful_outputs(
     return invalid
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--url", default="http://127.0.0.1:11434/api/generate")
-    parser.add_argument("--model", default="gemma4:26b")
-    parser.add_argument("--workers", type=int, default=4)
-    parser.add_argument("--max-batch-items", type=int, default=MAX_BATCH_ITEMS)
-    parser.add_argument("--limit", type=int)
-    args = parser.parse_args()
+def ensure_translations(
+    conversation_ids: set[str] | None = None,
+    *,
+    source_records: list[dict] | None = None,
+    url: str = DEFAULT_TRANSLATION_URL,
+    model: str = DEFAULT_TRANSLATION_MODEL,
+    workers: int = DEFAULT_TRANSLATION_WORKERS,
+    max_batch_items: int = MAX_BATCH_ITEMS,
+    limit: int | None = None,
+) -> dict[str, dict]:
+    """Ensure selected non-English appendix conversations have valid translations.
 
-    if args.workers < 1:
-        parser.error("--workers must be at least 1")
-    if args.max_batch_items < 1:
-        parser.error("--max-batch-items must be at least 1")
+    Requests use the existing Ollama endpoint. If the production audit is using
+    the same model, Ollama queues these requests within its configured parallel
+    context limit; this function neither stops the audit nor unloads the model.
+    """
+    if workers < 1:
+        raise ValueError("workers must be at least 1")
+    if max_batch_items < 1:
+        raise ValueError("max_batch_items must be at least 1")
+    if limit is not None and limit < 0:
+        raise ValueError("limit must not be negative")
     with _translation_run_lock():
         migrated = _migrate_legacy_cache()
         if migrated:
             print(json.dumps({"legacy_records_migrated_to_jsonl": migrated}), flush=True)
-        records = _target_records()
+        records = list(source_records) if source_records is not None else _target_records()
+        if conversation_ids is not None:
+            requested = set(conversation_ids)
+            records = [record for record in records if record["id"] in requested]
+            missing_sources = requested - {record["id"] for record in records}
+            if missing_sources:
+                raise RuntimeError(
+                    "Requested translation IDs are not non-English clear L3-L5 records: "
+                    + ", ".join(sorted(missing_sources))
+                )
+        invalid_languages = [
+            record["id"]
+            for record in records
+            if str(record.get("language") or "").strip().lower() in ENGLISH_LABELS
+        ]
+        if invalid_languages:
+            raise RuntimeError(
+                "Translation was requested for English or unknown-language records: "
+                + ", ".join(sorted(invalid_languages))
+            )
         completed = load_translations()
         repaired = _repair_english_passthrough(records, completed)
         invalidated = _invalidate_unfaithful_outputs(records, completed)
@@ -522,8 +560,8 @@ def main() -> None:
             print(json.dumps({"english_passthrough_records_repaired": repaired}), flush=True)
         complete_count = sum(record["id"] in completed for record in records)
         pending = [record for record in records if record["id"] not in completed]
-        if args.limit is not None:
-            pending = pending[: args.limit]
+        if limit is not None:
+            pending = pending[:limit]
         print(
             json.dumps(
                 {
@@ -535,14 +573,15 @@ def main() -> None:
             flush=True,
         )
 
-        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        failures = []
+        with ThreadPoolExecutor(max_workers=workers) as executor:
             futures = {
                 executor.submit(
                     _translate_record,
                     record,
-                    url=args.url,
-                    model=args.model,
-                    max_batch_items=args.max_batch_items,
+                    url=url,
+                    model=model,
+                    max_batch_items=max_batch_items,
                 ): record
                 for record in pending
             }
@@ -552,6 +591,7 @@ def main() -> None:
                     translated = future.result()
                 except Exception as error:
                     _record_error(record, error)
+                    failures.append((record["id"], str(error)))
                     print(
                         json.dumps(
                             {
@@ -579,6 +619,35 @@ def main() -> None:
                     ),
                     flush=True,
                 )
+        if failures:
+            details = "; ".join(
+                f"{conversation_id}: {error}"
+                for conversation_id, error in failures
+            )
+            raise RuntimeError(
+                f"Failed to translate {len(failures)} conversation(s): {details}"
+            )
+        return load_translations()
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--url", default=DEFAULT_TRANSLATION_URL)
+    parser.add_argument("--model", default=DEFAULT_TRANSLATION_MODEL)
+    parser.add_argument("--workers", type=int, default=DEFAULT_TRANSLATION_WORKERS)
+    parser.add_argument("--max-batch-items", type=int, default=MAX_BATCH_ITEMS)
+    parser.add_argument("--limit", type=int)
+    args = parser.parse_args()
+    try:
+        ensure_translations(
+            url=args.url,
+            model=args.model,
+            workers=args.workers,
+            max_batch_items=args.max_batch_items,
+            limit=args.limit,
+        )
+    except ValueError as error:
+        parser.error(str(error))
 
 
 if __name__ == "__main__":

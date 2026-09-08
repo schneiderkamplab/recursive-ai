@@ -15,7 +15,13 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
-from translate_appendix_conversations import load_translations
+from translate_appendix_conversations import (
+    DEFAULT_TRANSLATION_MODEL,
+    DEFAULT_TRANSLATION_URL,
+    DEFAULT_TRANSLATION_WORKERS,
+    ensure_translations,
+    load_translations,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -1462,7 +1468,7 @@ def build_appendix(
     if missing_translations:
         raise RuntimeError(
             f"Appendix L{level} is missing {len(missing_translations)} translations. "
-            "Run scripts/translate_appendix_conversations.py first."
+            "Allow automatic translation or run scripts/translate_appendix_conversations.py."
         )
 
     output = OUTDIR / f"appendix-l{level}.docx"
@@ -1567,6 +1573,14 @@ def main():
         action="store_true",
         help="Rebuild every selected case fragment instead of reusing valid cached fragments.",
     )
+    parser.add_argument(
+        "--no-auto-translate",
+        action="store_true",
+        help="Fail on missing appendix translations instead of requesting them from Ollama.",
+    )
+    parser.add_argument("--translation-url", default=DEFAULT_TRANSLATION_URL)
+    parser.add_argument("--translation-model", default=DEFAULT_TRANSLATION_MODEL)
+    parser.add_argument("--translation-workers", type=int, default=DEFAULT_TRANSLATION_WORKERS)
     args = parser.parse_args()
     if args.draft_only and args.appendix_level:
         parser.error("--draft-only cannot be combined with --appendix-level")
@@ -1585,7 +1599,25 @@ def main():
             for review in reviews
         }
         conversations = _load_conversations(all_conversation_ids)
-        translations = load_translations()
+        translation_ids = {
+            conversation_id
+            for conversation_id, conversation in conversations.items()
+            if str(conversation.get("language") or "").strip().lower()
+            not in {"", "english", "unknown"}
+        }
+        if translation_ids and not args.no_auto_translate:
+            translations = ensure_translations(
+                translation_ids,
+                source_records=[
+                    conversations[conversation_id]
+                    for conversation_id in translation_ids
+                ],
+                url=args.translation_url,
+                model=args.translation_model,
+                workers=args.translation_workers,
+            )
+        else:
+            translations = load_translations()
         for level in levels:
             build_appendix(
                 level,

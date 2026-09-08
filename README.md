@@ -94,14 +94,15 @@ ignored by Git.
 The paper generator reads the live audit and canonical manual-review JSONLs at
 runtime, so campaign counts in the manuscript reflect the exact checkpoint used
 for generation. Complete clear L3, L4, and L5 conversations are written to
-separate appendices. Non-English conversations must first be translated locally
-with the same 26B Gemma model. Its ignored JSONL cache appends newly translated
-conversations, atomically rewrites the file when an existing translation changes,
-and uses advisory read/write and single-translator locks.
+separate appendices. Missing non-English conversations are automatically
+translated locally with the same 26B Gemma model used by the audit. Translation
+requests join the existing Ollama queue without stopping the audit or unloading
+the model. The ignored JSONL cache appends newly translated conversations,
+atomically rewrites the file when an existing translation changes, and uses
+advisory read/write and single-translator locks.
 
 ```bash
-python scripts/translate_appendix_conversations.py
-python scripts/generate_paper.py --audit-cutoff 34389
+python scripts/generate_paper.py --audit-cutoff 36565
 ```
 
 Outputs are `paper/draft.docx`, `paper/appendix-l5.docx`,
@@ -111,6 +112,8 @@ or more of levels 3, 4, and 5. Appendix generation is incremental by default:
 unchanged complete appendices are left untouched, while changed documents reuse
 cached case fragments and rebuild only new or modified cases. Use
 `--rebuild-appendix-cache` after deliberately changing appendix formatting.
+Use `--no-auto-translate` to retain fail-fast behavior when Ollama is
+intentionally unavailable.
 Generated Word files and their local cache contain source transcripts and
 therefore stay outside Git.
 
