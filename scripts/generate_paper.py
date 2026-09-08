@@ -576,10 +576,15 @@ def _add_full_transcript(
     turn_description = f"{record['message_turns']} message turns"
     if template_noise_cleaned:
         turn_description = f"{displayed_turns} substantive turns shown | {record['message_turns']} source turns"
+    display_language = (
+        translation_record.get("source_language")
+        if translation_record is not None
+        else record.get("language", "Language not recorded")
+    )
     _set_run(
         metadata.add_run(
             f"Conversation {record['id']}  |  {record['dataset']}  |  "
-            f"{record.get('language', 'Language not recorded')}  |  {turn_description}"
+            f"{display_language}  |  {turn_description}"
         ),
         size=9.2,
         bold=True,

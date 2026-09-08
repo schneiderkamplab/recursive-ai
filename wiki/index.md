@@ -18,7 +18,7 @@ This Open Knowledge Format bundle documents the concepts, prompts, data, impleme
 
 ## Bundle status
 
-The v5 automated audit is running toward the 44,142-conversation corpus with zero recorded errors. Line 36,773 is the latest fully reconciled reporting boundary: automated screening retrieved 5,385 clear or potential candidates, all of which were manually adjudicated exactly once. Manual campaign outcomes there are 313 clear, 4,884 potential, and 188 none; their level distribution is L0=188, L1=2,485, L2=2,030, L3=422, L4=174, and L5=86. The separate calibration record is excluded. Process figures, the manuscript draft, and the complete clear L3–L5 appendices are frozen consistently at line 36,773; records appended after that line require later manual reconciliation and regeneration.
+The v5 automated audit is running toward the 44,142-conversation corpus with zero recorded errors. Line 37,772 is the latest fully reconciled reporting boundary: automated screening retrieved 5,478 clear or potential candidates, all of which were manually adjudicated exactly once. Manual campaign outcomes there are 319 clear, 4,965 potential, and 194 none; their level distribution is L0=194, L1=2,516, L2=2,064, L3=432, L4=181, and L5=91. The separate calibration record is excluded. Process figures, the manuscript draft, and the complete clear L3–L5 appendices are frozen consistently at line 37,772; records appended after that line require later manual reconciliation and regeneration.
 
 ## Provenance
 

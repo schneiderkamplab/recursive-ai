@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 37,772
+
+The 93-candidate round retained 81 potentials: L1=31, L2=34, L3=8, L4=5, and L5=3. The higher-level boundary set includes spiritual self-interpretation, migration, architectural entrepreneurship, management identity, relational boundaries, distress, CV and biography work, and possible-self aspiration. They remain potential where the AI formulation is not distinctly accepted and later reused, even though educational, occupational, entrepreneurial, health, and relational AI use all remain within the broad consumer scope.
+
+Two incomplete L5 cases make the distinction especially visible. The AI proposes a Marrakech-based AI livelihood after detailed disclosure of anxiety, finances, and mobility (`59fefc9cb3af7f8ca754d535`), while another exchange begins a guided Canada-immigration assessment for a newly married principal engineer (`24c09a9b2a3da7996f773fb4`); both end before adoption. A third architect-services case (`15002b735335cb9c4d1377b8`) receives an entrepreneurial path but does not apply it.
+
 # Potentials added through v5 record 36,773
 
 The 21-candidate round retained nineteen potentials: eleven L1 capability extensions, six L2 project or possession extensions, one incomplete L3 representation, and one incomplete L4 reflexive process. The L2 cases include an owned federated-learning framework, a real-estate project and its client chatbot, a student's FiM++ interpreter, a Unity game, a German online-store venture, and a jointly configured food experiment.

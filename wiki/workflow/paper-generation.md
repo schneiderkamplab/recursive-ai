@@ -26,8 +26,10 @@ at a fully reconciled reporting boundary while the production audit continues.
 # Translation
 
 Every non-English manually clear L3, L4, or L5 conversation is translated by the
-local `gemma4:26b` model with four concurrent 32,768-token contexts, temperature
-zero, and a schema requiring one English string per source item. Batches are
+local `gemma4:26b` model with the production service's four concurrent
+131,072-token contexts, temperature zero, and a schema requiring one English
+string per source item. Matching the audit context allows translations to share
+the resident model queue rather than request an incompatible model reload. Batches are
 contiguous and conservatively capped at 4,000 source characters and eight items,
 with individual pieces capped at 3,000 characters. The prompt
 requires complete translation without summarizing, censoring, explaining, or
@@ -63,6 +65,11 @@ take an exclusive lock. A second nonblocking run lock prevents two translator
 processes from generating the same pending work concurrently. Locks are held
 only for cache access rather than during model inference, so appendix generation
 can read completed translations while a long translation run continues.
+
+The appendix displays the translation record's validated source-language label
+for bilingual cases. This permits a locked metadata correction when automatic
+language detection confuses closely related languages without rewriting the
+normalized source conversation.
 
 The current keyed JSON cache migrates automatically and losslessly to JSONL on
 the first translator invocation; the legacy JSON remains as a local safety copy

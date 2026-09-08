@@ -36,6 +36,7 @@ MAX_BATCH_CHARACTERS = 4_000
 MAX_PIECE_CHARACTERS = 3_000
 MAX_BATCH_ITEMS = 8
 MAX_TRANSLATION_EXPANSION = 7
+TRANSLATION_CONTEXT_TOKENS = 131_072
 MIN_TRANSLATION_CHARACTER_LIMIT = 240
 DetectorFactory.seed = 20260907
 
@@ -222,7 +223,10 @@ def _request(url: str, model: str, language: str, batch: list[dict]) -> list[str
         "options": {
             "temperature": 0,
             "seed": 20260907,
-            "num_ctx": 32_768,
+            # Match the production audit runner exactly. Requesting a different
+            # context size can make Ollama wait for an incompatible model reload
+            # when OLLAMA_MAX_LOADED_MODELS=1, rather than sharing its queue.
+            "num_ctx": TRANSLATION_CONTEXT_TOKENS,
             "num_predict": 8_192,
         },
         "keep_alive": "30m",

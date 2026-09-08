@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 37,772
+
+The 93-candidate round adds six clear cases: two L3 representations, two L4 reflexive extensions, and two L5 enacted extensions. L3 cases concern an actual consensual relational configuration represented through roleplay (`61d0ba30c87672a6798b886a`) and a Spanish programmer's corrected biography reused across CV genres (`b49d9c7b0f8dda233411f20e`). L4 cases concern recognizing one's response to AI kindness and reusing it in AI-governance reasoning (`80445d4643c4218e2b46a805`) and adopting “visual designer” as a broader professional self-description for successive LinkedIn representations (`624fa1cea77ee8717dcb2817`).
+
+The two L5 cases were recovered from automated L1 results. A Venezuelan Android developer adopts the AI-proposed path of building and monetizing an application to support family and then configures that venture (`baee9a5022bdd581aeb3655a`). A user with an urgent development project and limited hardware carries AI guidance into a concrete computer-build plan and successive component choices (`3a589105952b5ae5fd9fa2c7`). These cases reinforce that L5 rests on accepted AI configuration organizing consequential intended marketplace action, not on proof of later offline completion.
+
 # No clear case added through v5 record 36,773
 
 The 21 candidates between records 36,566 and 36,773 added no manually clear case. Automated-clear `9c9f139a24381f72bfad926b` was reduced to L0 because the purported self-representation belongs to the fictional alien character enacted by the assistant, not the actual consumer. The cumulative clear evidence therefore remains L3=206, L4=42, and L5=65.

@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negatives added through v5 record 37,772
+
+Six candidates were assigned L0/none. Three are actual-user referent errors centered on an assigned AI persona, AI autonomy, or an AI “datalife” experiment (`2f79ae756fc50a1c0ff90cf6`, `86af7a793677fe329bee7330`, `9d59cf1da2afffd4ef642c2a`); one is explicit fictional sexual narrative (`c1a7d04972e4788d26d785d4`); one is fragmented multilingual information seeking (`5a91af470c54801a30ec5688`); and one speculative AI experiment uses a fictional framing rather than representing the actual user (`96453bb38819bf4103842045`). The assistant's first-person identity remains a key hard-negative boundary.
+
 # Added negatives through v5 record 36,773
 
 Two retrieved role-play cases were assigned L0/none. Automated-clear `9c9f139a24381f72bfad926b` sustains an alien weight-gain and feeding fantasy for 136 exchanges; its first-person causal account at A101 represents the fictional assistant character, and U101 merely continues that role-play. Conversation `b0ff27152f6e4b7b8fdf97fd` is an explicitly fictional sexual teacher scenario. Neither transcript represents the actual consumer, regardless of length, affect, first-person grammar, correction, or narrative continuity.
