@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear case added through v5 record 36,565
+
+Conversation `60986391eaaac0e78aebeb0a` is clear L5 relational extension. The consumer externalizes sustained ideological conflict with extended family, failed reconciliation, social anxiety, and a wish for distance. The AI formulates the situation through the consumer's right to set boundaries, protect well-being, and communicate limits clearly. The consumer adopts that framing, specifies refusals of gifts, favors, and ordinary engagement, and recursively applies it while requesting and revising language for written-only, professional-only, and fully severed relationships (`U1–U16 → A15–A18 → U18–U20 → U21–U29`).
+
+The evidence is prospective enactment: an accepted AI-mediated formulation organizes intended lived relational arrangements. Classification does not require or claim proof that the consumer later carried out the severance offline.
+
 # Clear cases added through v5 record 36,285
 
 The 88-candidate round added nine clear cases: six L3 representations, one L4 reflexive extension, and two L5 enacted or possible-self extensions.

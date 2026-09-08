@@ -18,7 +18,7 @@ This Open Knowledge Format bundle documents the concepts, prompts, data, impleme
 
 ## Bundle status
 
-The v5 automated audit is stopped at a validated 36,285-record append-only checkpoint out of the 44,142-conversation corpus, with zero recorded errors. This is also the latest fully reconciled reporting boundary: automated screening retrieved 5,344 clear or potential candidates, all of which were manually adjudicated exactly once. Manual campaign outcomes are 312 clear, 4,847 potential, and 185 none; their level distribution is L0=185, L1=2,466, L2=2,015, L3=420, L4=173, and L5=85. The separate calibration record is excluded. Process figures are frozen consistently at line 36,285. The manuscript and complete L3–L5 appendices remain at their earlier documented generation boundary and must be regenerated before their numerical claims are treated as current.
+The v5 automated audit is running toward the 44,142-conversation corpus with zero recorded errors. Line 36,565 is the latest fully reconciled reporting boundary: automated screening retrieved 5,364 clear or potential candidates, all of which were manually adjudicated exactly once. Manual campaign outcomes there are 313 clear, 4,865 potential, and 186 none; their level distribution is L0=186, L1=2,474, L2=2,024, L3=421, L4=173, and L5=86. The separate calibration record is excluded. Process figures are frozen consistently at line 36,565; records appended after that line require later manual reconciliation and figure regeneration. The manuscript and complete L3–L5 appendices remain at their earlier documented generation boundary and must also be regenerated before their numerical claims are treated as current.
 
 ## Provenance
 

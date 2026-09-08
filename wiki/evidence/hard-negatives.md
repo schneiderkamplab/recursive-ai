@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Added negative through v5 record 36,565
+
+Conversation `cb82557d745c5cfd8cb31f2b` is L0/none. It begins as an explicitly requested sexualized neighbor role-play; subsequent corrections apply to the assigned character rather than the actual consumer, and a later model failure repeats embedded transcript material. The case reinforces two separate safeguards: verify the self-referent before coding identity development, and do not treat generated repetition as recursive uptake.
+
 # Added negatives through v5 record 36,285
 
 Five retrieved candidates were assigned L0/none. Four are referent failures: a school-romance light-novel game (`5440ba07e9a9979051ffbb0d`), third-party praise embedded in grandson role-play (`e12b6b2c60eb697e623bac63`), explicit fictional-character role-play (`a76a7b23e10ad281193a8d74`), and a medieval game centered on a stipulated fifteen-year-old character (`fd556b11ef8f0414ee40a7d3`). Their first-person continuity and apparent development remain inside fictional or assigned roles rather than extending the actual consumer.

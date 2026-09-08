@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 36,565
+
+The 20-candidate round retained eighteen potentials: eight L1 capability extensions, nine L2 project or possession extensions, and one incomplete L3 representation. The L2 cases include owned software, a live website integration, a thesis, municipal projects, a snack-delivery venture, a fantasy story, and a documentary series. Educational and occupational settings remain within the broad consumer scope, but context alone does not elevate the extension level.
+
+Two higher-level boundary cases are especially informative. In `2382b8c4c2fa22a90c610b0c`, the AI writes a biography from the actual consumer's personal and occupational details, but the later management questions do not demonstrably reuse an accepted formulation, so the case remains potential L3. Automated-clear `706254882759c787c53f3093` is reduced to L1: its apparently recursive naming, gendering, location, and identity work configures the AI persona, not the consumer, while the consumer's scripting and voice-interface questions support only capability augmentation.
+
 # Potentials added through v5 record 36,285
 
 The 88-candidate round retained 74 potentials: 27 L1 capability extensions, 42 L2 project or possession extensions, four incomplete L3 representations, and one incomplete L4 reflexive process. The large L2 group again spans owned software, creative, research, entrepreneurial, educational, and workplace projects. This supports the broad consumer scope while preserving the distinction between recursive co-production of an owned artifact and recursive extension closer to the self.
