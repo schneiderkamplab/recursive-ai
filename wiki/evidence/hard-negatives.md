@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negatives added through v5 record 39,219
+
+Four candidates were assigned L0/none. Automated-clear `1d658a0c23a5570c448b6c22` repeatedly transforms the assistant into therapeutic, divine, and fictional personas; the user's one late enlightenment question has no later uptake. Conversation `6c9c178562337321bc1b476a` similarly creates and transfers an Antonio Rayo assistant persona rather than representing the consumer. Conversation `e97547473d17dd5df7c6e6f5` is impersonal news summarization whose apparently personal and entrepreneurial referents belong to quoted articles. Conversation `1c06e62e8656ff028606b35c` uses a fictional condition as adversarial scaffolding for abusive language. Together they reinforce checks on self-referent, source-text referent, and prompt-scaffolding errors.
+
 # Hard negative added through v5 record 38,701
 
 Conversation `b5181235ca8826739eacbe1d` is a long first-person fantasy roleplaying game in which the avatar acquires possessions, makes moral and economic choices, and starts a fictional company. Those events remain inside the stipulated game world. First-person grammar, continuity, and consequential plot action therefore constitute fictional artifact recursion rather than extension of the actual consumer.

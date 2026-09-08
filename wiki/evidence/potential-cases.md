@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 39,219
+
+The 44-candidate round retains 35 potentials: L1=12, L2=16, L3=6, and L5=1. Capability extensions span health and emotional support, language and mathematics learning, consumer technology choice, creative audience building, research critique, and rhetorical training. Owned projects include software, scholarly writing, a lecture, credit scoring, a pyrometer company, a gaming studio, a mobile garden, and a Decentraland assistant.
+
+The six incomplete L3 cases concern interview self-presentation, sexual or romantic rehearsal, an architect cover letter, student-voice assignment writing, and personal-value configuration. They remain potential where generic restyling does not demonstrate acceptance of invented self-claims, the assistant's role dominates the exchange, or the transcript ends before the represented self is reused. The sole L5 potential, `cd1291dcc5e8da36e39746fd`, is theoretically valuable because the consumer reports that prior AI-authored flirting was used successfully and names it as a reusable mode. Precision nevertheless requires potential status: most prior AI content is embedded in user turns and the directly observed assistant does not enact the mode on the new relational situation.
+
 # Potentials added through v5 record 38,701
 
 The 37-candidate round retains 34 potentials: L1=14, L2=15, L3=4, and L4=1. Capability cases include language learning, health management, consumer choice, marketplace inquiry, and technical or trading analysis. Owned-project cases include a PhD proposal, software, trading robots, AI personas, fiction and music artifacts, a research experiment, and a catering-service chatbot. The L3 boundaries concern contradictory identity labeling (`88e5a3373574a6e61cfde3fa`), a jazz-pianist identity accepted without later reuse (`628f3f2066814a81d129dfa7`), thin AI inference about the actual user (`e9f43394263b8b71676e3cea`), and a generated professional-personal profile ending before uptake (`7dd872f65c858a6547a34dc5`).

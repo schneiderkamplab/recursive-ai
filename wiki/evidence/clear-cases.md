@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 39,219
+
+The 44-candidate round adds four clear L3 representations and one clear L4 reflexive extension. In `dbdf15893ea616d2a63de37d`, the consumer iteratively develops resume language and adopts the AI-corrected label “engineer by day, tinkerer by night.” In `038fbccaec76eace69c0e440`, a socially anxious consumer repeatedly calibrates condolence language to a short, non-flowery personal voice, commits to a formulation, and carries that calibrated voice into a new group message. In `d34e9716924d4c520a749925`, AI-generated Instagram captions become a recursively negotiated public representation of the consumer's own yoga practice and worldview; the consumer ultimately recombines the developed language into their own caption draft. In `2fd58b3115c7b50ccdf3ce56`, AI-rewritten descriptions of the consumer's asphalt research are constrained, reused, and applied to further CV entries.
+
+Conversation `52a9e61451a253fc4f843ae1` is clear L4. After supplying biographical and aspirational answers in an English interview, the user receives a broadly positive ability assessment, challenges its lack of specificity, and explicitly asks for the detailed diagnostic review the AI then provides. The AI's account of actual language ability therefore becomes an object of reflexive negotiation and a premise for a more specific self-understanding.
+
 # Clear cases added through v5 record 38,701
 
 The 37-candidate round adds one clear L4 and one clear L5 case. In health-context conversation `49a5007691f5471f17074e87`, the consumer asks for concise positive self-talk for managing an overactive bladder while traveling. The AI supplies capability- and control-oriented self-statements; the consumer says these make sense and can be tried, then repeatedly carries the accepted format into more specific clothing, privacy, travel, and no-bathroom situations (`U5–U31 → A32 → U33/U36 → U34–U49`). This is L4 because AI-generated self-representations enter the consumer's coping repertoire and organize later reflection; proof of subsequent offline use is not required.
