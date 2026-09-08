@@ -14,7 +14,8 @@ Executable research utilities live here.
 - `translate_appendix_conversations.py` builds a resumable 26B Gemma translation
   cache for non-English clear L3 through L5 evidence.
 - `generate_paper.py` creates the live manuscript, figures, and separate L3,
-  L4, and L5 appendices.
+  L4, and L5 appendices. It incrementally caches conversation-level Word XML,
+  skips unchanged appendix outputs, and selectively rebuilds invalidated cases.
 
 ## Historical instruments
 

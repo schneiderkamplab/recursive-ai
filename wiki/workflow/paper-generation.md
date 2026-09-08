@@ -64,6 +64,32 @@ rather than silently deleted.
 The original-language column uses an explicit broad-Unicode typeface so CJK
 and other non-Latin source text remains visible in Word and rendered QA.
 
+# Incremental appendix generation
+
+Appendix generation is incremental at both the document and conversation
+levels. For each clear conversation, the generator computes a SHA-256
+fingerprint over the normalized source record, canonical manual adjudication,
+validated translation when present, and an explicit fragment-format version.
+It stores the resulting relationship-free WordprocessingML body fragment under
+the ignored `paper/.appendix-cache/` directory. New or changed cases alone are
+rendered into new fragments; unchanged fragments are reused during assembly.
+
+Case headings and ordinal numbers are added during assembly rather than stored
+inside fragments. A newly inserted case can therefore change later case numbers
+without invalidating later transcript fragments. Removed cases disappear and
+level changes move cases automatically because each output is assembled from
+the current canonical clear-case membership.
+
+Each level also has a manifest containing its ordered case fingerprints and the
+SHA-256 hash of the completed DOCX. If both the manifest and DOCX are current,
+the generator leaves the entire appendix untouched. If any case changed, it
+reassembles the DOCX from cached fragments and rebuilds only invalid fragments.
+Writes to fragments and manifests are atomic. Use `--rebuild-appendix-cache`
+when appendix rendering code or formatting is deliberately changed; increment
+`APPENDIX_FRAGMENT_FORMAT_VERSION` whenever such a change must invalidate all
+existing fragments. Multiple requested levels share one normalized-corpus scan
+and one translation-cache load.
+
 # Rendering and verification
 
 Generated Word documents are rendered to page images before delivery. Visual QA

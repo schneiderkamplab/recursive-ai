@@ -100,14 +100,18 @@ Git.
 
 ```bash
 python scripts/translate_appendix_conversations.py
-python scripts/generate_paper.py
+python scripts/generate_paper.py --audit-cutoff 34389
 ```
 
 Outputs are `paper/draft.docx`, `paper/appendix-l5.docx`,
 `paper/appendix-l4.docx`, and `paper/appendix-l3.docx`. Use `--draft-only` to
 regenerate only the manuscript or repeat `--appendix-level LEVEL` to select one
-or more of levels 3, 4, and 5. Generated Word files contain source transcripts
-and therefore stay outside Git.
+or more of levels 3, 4, and 5. Appendix generation is incremental by default:
+unchanged complete appendices are left untouched, while changed documents reuse
+cached case fragments and rebuild only new or modified cases. Use
+`--rebuild-appendix-cache` after deliberately changing appendix formatting.
+Generated Word files and their local cache contain source transcripts and
+therefore stay outside Git.
 
 ## Preserve resumable research state
 

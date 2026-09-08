@@ -2,17 +2,17 @@ import argparse
 import gzip
 import hashlib
 import json
+import os
 import re
 from collections import Counter
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 from docx import Document
-from docx.enum.section import WD_SECTION
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
-from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_BREAK
-from docx.oxml import OxmlElement
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement, parse_xml
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 
@@ -33,6 +33,10 @@ MANUAL_PATHS = {
     for label in ("clear", "potential", "none")
 }
 TRANSLATIONS_PATH = ROOT / "runtime" / "appendix_translations_all_gemma4_26b.json"
+APPENDIX_CACHE_DIR = OUTDIR / ".appendix-cache"
+# Increment this when appendix case rendering or formatting changes in a way
+# that is not already represented by the conversation/review/translation data.
+APPENDIX_FRAGMENT_FORMAT_VERSION = 1
 FOCAL_IDS = (
     "7f456b31db9f8c5815da09e3",
     "118ea59bc07477688fe6e093",
@@ -546,11 +550,20 @@ def _add_classification_explanation(doc, review):
     _add_body(doc, explanation, bold_lead=f"This conversation is classified as clear L{level}.")
 
 
-def _add_full_transcript(doc, case_number, record, review, translation_record=None):
+def _add_full_transcript(
+    doc,
+    case_number,
+    record,
+    review,
+    translation_record=None,
+    *,
+    include_heading=True,
+):
     template_noise_cleaned = record["id"] == MANILA_ID
     displayed_turns = record["message_turns"] - 2 if template_noise_cleaned else record["message_turns"]
-    heading = doc.add_heading(f"Case {case_number} Conversation {record['id']}", level=1)
-    heading.paragraph_format.page_break_before = case_number > 1
+    if include_heading:
+        heading = doc.add_heading(f"Case {case_number} Conversation {record['id']}", level=1)
+        heading.paragraph_format.page_break_before = case_number > 1
     eyebrow = doc.add_paragraph()
     eyebrow.paragraph_format.space_before = Pt(0)
     eyebrow.paragraph_format.space_after = Pt(4)
@@ -727,6 +740,176 @@ def _add_full_transcript(doc, case_number, record, review, translation_record=No
         )
 
 
+def _appendix_fragment_fingerprint(record, review, translation_record):
+    payload = {
+        "format_version": APPENDIX_FRAGMENT_FORMAT_VERSION,
+        "conversation": record,
+        "review": review,
+        "translation": translation_record,
+    }
+    return hashlib.sha256(
+        json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def _appendix_fragment_path(conversation_id):
+    return APPENDIX_CACHE_DIR / f"{conversation_id}.json.gz"
+
+
+def _file_sha256(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _appendix_manifest_path(level):
+    return APPENDIX_CACHE_DIR / f"appendix-l{level}.manifest.json"
+
+
+def _appendix_document_fingerprint(level, case_fingerprints):
+    payload = {
+        "format_version": APPENDIX_FRAGMENT_FORMAT_VERSION,
+        "level": level,
+        "cases": case_fingerprints,
+    }
+    return hashlib.sha256(
+        json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
+    ).hexdigest()
+
+
+def _appendix_output_is_current(level, output, expected_fingerprint):
+    manifest_path = _appendix_manifest_path(level)
+    if not output.exists() or not manifest_path.exists():
+        return False
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return False
+    return (
+        manifest.get("format_version") == APPENDIX_FRAGMENT_FORMAT_VERSION
+        and manifest.get("document_fingerprint") == expected_fingerprint
+        and manifest.get("output_sha256") == _file_sha256(output)
+    )
+
+
+def _write_json_atomic(path, payload):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")),
+            encoding="utf-8",
+        )
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _save_docx_atomic(doc, output):
+    temporary = output.with_name(f".{output.stem}.{os.getpid()}.docx")
+    try:
+        doc.save(temporary)
+        temporary.replace(output)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _read_appendix_fragment(path, expected_fingerprint):
+    if not path.exists():
+        return None
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as source:
+            cached = json.load(source)
+    except (OSError, json.JSONDecodeError):
+        return None
+    if (
+        cached.get("format_version") != APPENDIX_FRAGMENT_FORMAT_VERSION
+        or cached.get("fingerprint") != expected_fingerprint
+        or not isinstance(cached.get("body_xml"), list)
+        or not cached["body_xml"]
+    ):
+        return None
+    return cached["body_xml"]
+
+
+def _write_appendix_fragment(path, conversation_id, fingerprint, body_xml):
+    APPENDIX_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    payload = {
+        "format_version": APPENDIX_FRAGMENT_FORMAT_VERSION,
+        "conversation_id": conversation_id,
+        "fingerprint": fingerprint,
+        "body_xml": body_xml,
+    }
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    try:
+        with gzip.open(temporary, "wt", encoding="utf-8") as destination:
+            json.dump(payload, destination, ensure_ascii=False, separators=(",", ":"))
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _build_appendix_fragment(record, review, translation_record):
+    fragment_doc = Document()
+    _configure_document(fragment_doc)
+    _add_full_transcript(
+        fragment_doc,
+        None,
+        record,
+        review,
+        translation_record,
+        include_heading=False,
+    )
+    _sanitize_structural_titles(fragment_doc)
+    body_elements = [
+        child
+        for child in fragment_doc.element.body.iterchildren()
+        if child.tag != qn("w:sectPr")
+    ]
+    relationship_attributes = {qn("r:id"), qn("r:embed"), qn("r:link")}
+    if any(
+        relationship_attributes.intersection(element.attrib)
+        for child in body_elements
+        for element in child.iter()
+    ):
+        raise RuntimeError(
+            f"Appendix fragment {record['id']} contains a package relationship and cannot be cached safely"
+        )
+    return [
+        child.xml
+        for child in body_elements
+    ]
+
+
+def _get_appendix_fragment(record, review, translation_record, *, rebuild=False):
+    fingerprint = _appendix_fragment_fingerprint(record, review, translation_record)
+    path = _appendix_fragment_path(record["id"])
+    body_xml = None if rebuild else _read_appendix_fragment(path, fingerprint)
+    if body_xml is not None:
+        return body_xml, True
+    body_xml = _build_appendix_fragment(record, review, translation_record)
+    _write_appendix_fragment(path, record["id"], fingerprint, body_xml)
+    return body_xml, False
+
+
+def _append_case_heading(doc, case_number, conversation_id):
+    heading = doc.add_heading(f"Case {case_number} Conversation {conversation_id}", level=1)
+    heading.paragraph_format.page_break_before = case_number > 1
+
+
+def _append_cached_body(doc, body_xml):
+    body = doc.element.body
+    section_properties = body.sectPr
+    for serialized in body_xml:
+        element = parse_xml(serialized.encode("utf-8"))
+        if section_properties is None:
+            body.append(element)
+        else:
+            section_properties.addprevious(element)
+
+
 def _make_model_figure():
     width, height = 2160, 1170
     image = Image.new("RGB", (width, height), "white")
@@ -752,7 +935,8 @@ def _make_model_figure():
 
     def arrow(start, end, label=None):
         draw.line([start, end], fill=f"#{BLUE}", width=5)
-        x1, y1 = start; x2, y2 = end
+        x1, y1 = start
+        x2, y2 = end
         import math
         angle = math.atan2(y2-y1, x2-x1)
         length, spread = 22, 0.55
@@ -794,7 +978,8 @@ def _make_model_figure():
     for (x1, y1), (x2, y2) in zip(feedback, feedback[1:]):
         steps = max(abs(x2-x1), abs(y2-y1)) // 18
         for i in range(0, steps, 2):
-            a = i / steps; b = min((i+1)/steps, 1)
+            a = i / steps
+            b = min((i+1)/steps, 1)
             draw.line([(x1+(x2-x1)*a, y1+(y2-y1)*a), (x1+(x2-x1)*b, y1+(y2-y1)*b)], fill=f"#{BLUE}", width=4)
     draw.polygon([(220, 735), (204, 764), (236, 764)], fill=f"#{BLUE}")
     centered("applications and their consequences become new externalizations", (1080, 1000), regular, DARK_BLUE)
@@ -1249,16 +1434,31 @@ def build_draft(campaign):
     print(DOCX_PATH)
 
 
-def build_appendix(level, campaign):
+def _appendix_reviews(level, campaign):
     reviews = [
         record
         for record in campaign["clear_records"]
         if int(record["assessment"]["extension_level"]) == level
     ]
-    reviews.sort(key=lambda record: record["conversation_id"])
+    return sorted(reviews, key=lambda record: record["conversation_id"])
+
+
+def build_appendix(
+    level,
+    campaign,
+    *,
+    reviews=None,
+    conversations=None,
+    translations=None,
+    rebuild_cache=False,
+):
+    reviews = _appendix_reviews(level, campaign) if reviews is None else reviews
     review_by_id = {record["conversation_id"]: record for record in reviews}
-    conversations = _load_conversations(review_by_id)
-    translations = _load_translations()
+    conversations = _load_conversations(review_by_id) if conversations is None else {
+        conversation_id: conversations[conversation_id]
+        for conversation_id in review_by_id
+    }
+    translations = _load_translations() if translations is None else translations
     missing_translations = [
         conversation_id
         for conversation_id, conversation in conversations.items()
@@ -1270,6 +1470,23 @@ def build_appendix(level, campaign):
             f"Appendix L{level} is missing {len(missing_translations)} translations. "
             "Run scripts/translate_appendix_conversations.py first."
         )
+
+    output = OUTDIR / f"appendix-l{level}.docx"
+    case_fingerprints = [
+        {
+            "conversation_id": review["conversation_id"],
+            "fingerprint": _appendix_fragment_fingerprint(
+                conversations[review["conversation_id"]],
+                review,
+                translations.get(review["conversation_id"]),
+            ),
+        }
+        for review in reviews
+    ]
+    document_fingerprint = _appendix_document_fingerprint(level, case_fingerprints)
+    if not rebuild_cache and _appendix_output_is_current(level, output, document_fingerprint):
+        print(f"{output} (unchanged; reused complete {len(reviews)}-case appendix)")
+        return
 
     doc = Document()
     _configure_document(doc)
@@ -1303,18 +1520,23 @@ def build_appendix(level, campaign):
         "and should be handled accordingly.",
     )
     doc.add_page_break()
+    cache_hits = 0
+    cache_rebuilt = 0
     for case_number, review in enumerate(reviews, 1):
         conversation_id = review["conversation_id"]
         translation_record = translations.get(conversation_id)
         if translation_record is not None:
             _validate_translation_record(conversations[conversation_id], translation_record)
-        _add_full_transcript(
-            doc,
-            case_number,
+        body_xml, was_cached = _get_appendix_fragment(
             conversations[conversation_id],
             review,
             translation_record,
+            rebuild=rebuild_cache,
         )
+        cache_hits += int(was_cached)
+        cache_rebuilt += int(not was_cached)
+        _append_case_heading(doc, case_number, conversation_id)
+        _append_cached_body(doc, body_xml)
 
     props = doc.core_properties
     props.title = f"Appendix L{level} Clear Conversation Evidence"
@@ -1322,9 +1544,19 @@ def build_appendix(level, campaign):
     props.author = "Research team"
     props.comments = "Generated from canonical manual evidence and normalized public conversation records."
     _sanitize_structural_titles(doc)
-    output = OUTDIR / f"appendix-l{level}.docx"
-    doc.save(output)
-    print(output)
+    _save_docx_atomic(doc, output)
+    _write_json_atomic(
+        _appendix_manifest_path(level),
+        {
+            "format_version": APPENDIX_FRAGMENT_FORMAT_VERSION,
+            "level": level,
+            "document_fingerprint": document_fingerprint,
+            "output_sha256": _file_sha256(output),
+            "case_count": len(reviews),
+            "case_fingerprints": case_fingerprints,
+        },
+    )
+    print(f"{output} (case cache: {cache_hits} reused, {cache_rebuilt} rebuilt)")
 
 
 def main():
@@ -1336,6 +1568,11 @@ def main():
         type=int,
         help="Freeze document counts and selected evidence at the first N committed v5 records.",
     )
+    parser.add_argument(
+        "--rebuild-appendix-cache",
+        action="store_true",
+        help="Rebuild every selected case fragment instead of reusing valid cached fragments.",
+    )
     args = parser.parse_args()
     if args.draft_only and args.appendix_level:
         parser.error("--draft-only cannot be combined with --appendix-level")
@@ -1344,8 +1581,26 @@ def main():
         build_draft(campaign)
     if not args.draft_only:
         levels = args.appendix_level or [5, 4, 3]
+        reviews_by_level = {
+            level: _appendix_reviews(level, campaign)
+            for level in levels
+        }
+        all_conversation_ids = {
+            review["conversation_id"]
+            for reviews in reviews_by_level.values()
+            for review in reviews
+        }
+        conversations = _load_conversations(all_conversation_ids)
+        translations = _load_translations()
         for level in levels:
-            build_appendix(level, campaign)
+            build_appendix(
+                level,
+                campaign,
+                reviews=reviews_by_level[level],
+                conversations=conversations,
+                translations=translations,
+                rebuild_cache=args.rebuild_appendix_cache,
+            )
 
 
 if __name__ == "__main__":
