@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 38,289
+
+The 45-candidate round retained 40 potentials: L1=18, L2=18, and L3=4. The L1 cases span legal, travel, health, language, technical, occupational, and entrepreneurial capability. L2 covers owned songs, fiction and books, software, governance and accessibility deliverables, academic work, product and venture projects, and a relationally meaningful shared Google Maps list. The four L3 boundaries represent an inferred age (`f20a03741dabb0a5b17cddc3`), a student's LinkedIn identity (`dc853992a1678a240d6babef`), a recalled personal name (`e5c8c4e940e589e7150e878b`), and a simulated deceased-grandmother relationship (`67e494a8916b74da4928c840`); none contains distinct acceptance and later reuse of an AI-derived actual-user representation.
+
+Two automated clears illustrate boundary correction. The recalled-name case remains potential L3 because recognition is not followed by recursive re-entry, while the Discord/Vicuna article case (`32ca4a261b95ce24da51b011`) is L2 because the apparent self-description belongs to conceptual source text rather than the actual user.
+
 # Potentials added through v5 record 37,772
 
 The 93-candidate round retained 81 potentials: L1=31, L2=34, L3=8, L4=5, and L5=3. The higher-level boundary set includes spiritual self-interpretation, migration, architectural entrepreneurship, management identity, relational boundaries, distress, CV and biography work, and possible-self aspiration. They remain potential where the AI formulation is not distinctly accepted and later reused, even though educational, occupational, entrepreneurial, health, and relational AI use all remain within the broad consumer scope.

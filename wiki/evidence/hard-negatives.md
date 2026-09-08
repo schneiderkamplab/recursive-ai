@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negatives added through v5 record 38,289
+
+Three candidates were assigned L0/none. Two automated clears are sustained fictional referent errors: a League of Legends/Yordle scenario (`63e17ad6ece4da22fb75e4be`) and a first-person Magic dragon role-play (`49e460fb553a9cc20e8caa7d`). A third case (`dfb32ab0475130d7d422415c`) is too fragmented and incoherent to sustain any nonzero extension process. These decisions again separate fictional or malformed continuity from consumer self-extension.
+
 # Hard negatives added through v5 record 37,772
 
 Six candidates were assigned L0/none. Three are actual-user referent errors centered on an assigned AI persona, AI autonomy, or an AI “datalife” experiment (`2f79ae756fc50a1c0ff90cf6`, `86af7a793677fe329bee7330`, `9d59cf1da2afffd4ef642c2a`); one is explicit fictional sexual narrative (`c1a7d04972e4788d26d785d4`); one is fragmented multilingual information seeking (`5a91af470c54801a30ec5688`); and one speculative AI experiment uses a fictional framing rather than representing the actual user (`96453bb38819bf4103842045`). The assistant's first-person identity remains a key hard-negative boundary.

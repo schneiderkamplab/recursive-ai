@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 38,289
+
+The 45-candidate round adds two clear L5 cases and no new clear L3 or L4. In `89240c71866f85895b92d139`, a consumer's detailed account of work, finances, confidence, and relationships is transformed into an AI assessment of leadership potential and internal conflicts; the consumer accepts it as a notebook agenda and selects internal conflicts for the next round of work (`U4–U12 → A13 → U14–U15 → U16`). In `46354a7dc28138a4b67d4ab1`, the consumer adopts the AI's e-commerce opportunity as “my own platform” and recursively configures the resulting “one man AI boss side hustle” (`U3 → A3–A4 → U5 → U7–U17`). Both meet L5 through prospective application inside the interaction; neither requires independent evidence of completed offline action.
+
 # Clear cases added through v5 record 37,772
 
 The 93-candidate round adds six clear cases: two L3 representations, two L4 reflexive extensions, and two L5 enacted extensions. L3 cases concern an actual consensual relational configuration represented through roleplay (`61d0ba30c87672a6798b886a`) and a Spanish programmer's corrected biography reused across CV genres (`b49d9c7b0f8dda233411f20e`). L4 cases concern recognizing one's response to AI kindness and reusing it in AI-governance reasoning (`80445d4643c4218e2b46a805`) and adopting “visual designer” as a broader professional self-description for successive LinkedIn representations (`624fa1cea77ee8717dcb2817`).
