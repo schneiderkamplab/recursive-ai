@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 38,701
+
+The 37-candidate round retains 34 potentials: L1=14, L2=15, L3=4, and L4=1. Capability cases include language learning, health management, consumer choice, marketplace inquiry, and technical or trading analysis. Owned-project cases include a PhD proposal, software, trading robots, AI personas, fiction and music artifacts, a research experiment, and a catering-service chatbot. The L3 boundaries concern contradictory identity labeling (`88e5a3373574a6e61cfde3fa`), a jazz-pianist identity accepted without later reuse (`628f3f2066814a81d129dfa7`), thin AI inference about the actual user (`e9f43394263b8b71676e3cea`), and a generated professional-personal profile ending before uptake (`7dd872f65c858a6547a34dc5`).
+
+The sole potential L4 case, `adca0a687886c6bce45cb199`, plausibly turns an AI-imposed emotion-control agenda into self-reflection, but ambiguous book or role-play framing and weak chronology prevent a clear finding. Automated higher-level case `de940367dd44245743030d33` is instead L2 because apparent selfhood attaches to a configured AI sentinel persona while the actual consumer's defensible extension locus is the research project.
+
 # Potentials added through v5 record 38,289
 
 The 45-candidate round retained 40 potentials: L1=18, L2=18, and L3=4. The L1 cases span legal, travel, health, language, technical, occupational, and entrepreneurial capability. L2 covers owned songs, fiction and books, software, governance and accessibility deliverables, academic work, product and venture projects, and a relationally meaningful shared Google Maps list. The four L3 boundaries represent an inferred age (`f20a03741dabb0a5b17cddc3`), a student's LinkedIn identity (`dc853992a1678a240d6babef`), a recalled personal name (`e5c8c4e940e589e7150e878b`), and a simulated deceased-grandmother relationship (`67e494a8916b74da4928c840`); none contains distinct acceptance and later reuse of an AI-derived actual-user representation.

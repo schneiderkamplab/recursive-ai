@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 38,701
+
+The 37-candidate round adds one clear L4 and one clear L5 case. In health-context conversation `49a5007691f5471f17074e87`, the consumer asks for concise positive self-talk for managing an overactive bladder while traveling. The AI supplies capability- and control-oriented self-statements; the consumer says these make sense and can be tried, then repeatedly carries the accepted format into more specific clothing, privacy, travel, and no-bathroom situations (`U5–U31 → A32 → U33/U36 → U34–U49`). This is L4 because AI-generated self-representations enter the consumer's coping repertoire and organize later reflection; proof of subsequent offline use is not required.
+
+Conversation `6dc4cccdc90e8abf770e29e0` is an unusually strong L5 case. The consumer wants to draw on a fictional executive persona to become more confident in business interactions. The AI translates this into speech, posture, and calibrated performance; the consumer accepts and refines the advice, then returns after a meeting and reports deliberately using the more confident speech and posture with a favorable result (`U11 → A11 → U12/U14 → U15–U16`). It therefore includes not only accepted possible-self configuration but reported real-world enactment.
+
 # Clear cases added through v5 record 38,289
 
 The 45-candidate round adds two clear L5 cases and no new clear L3 or L4. In `89240c71866f85895b92d139`, a consumer's detailed account of work, finances, confidence, and relationships is transformed into an AI assessment of leadership potential and internal conflicts; the consumer accepts it as a notebook agenda and selects internal conflicts for the next round of work (`U4–U12 → A13 → U14–U15 → U16`). In `46354a7dc28138a4b67d4ab1`, the consumer adopts the AI's e-commerce opportunity as “my own platform” and recursively configures the resulting “one man AI boss side hustle” (`U3 → A3–A4 → U5 → U7–U17`). Both meet L5 through prospective application inside the interaction; neither requires independent evidence of completed offline action.

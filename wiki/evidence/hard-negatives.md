@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negative added through v5 record 38,701
+
+Conversation `b5181235ca8826739eacbe1d` is a long first-person fantasy roleplaying game in which the avatar acquires possessions, makes moral and economic choices, and starts a fictional company. Those events remain inside the stipulated game world. First-person grammar, continuity, and consequential plot action therefore constitute fictional artifact recursion rather than extension of the actual consumer.
+
 # Hard negatives added through v5 record 38,289
 
 Three candidates were assigned L0/none. Two automated clears are sustained fictional referent errors: a League of Legends/Yordle scenario (`63e17ad6ece4da22fb75e4be`) and a first-person Magic dragon role-play (`49e460fb553a9cc20e8caa7d`). A third case (`dfb32ab0475130d7d422415c`) is too fragmented and incoherent to sustain any nonzero extension process. These decisions again separate fictional or malformed continuity from consumer self-extension.
