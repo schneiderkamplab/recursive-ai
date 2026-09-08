@@ -115,11 +115,11 @@ legibility, page numbering, blank pages, clipping, and source-turn continuity.
 The Word files contain complete public-corpus transcripts and therefore remain
 outside the public Git repository.
 
-The current local documents were generated with `--audit-cutoff 34389`. They
-contain 62 clear L5, 38 clear L4, and 199 clear L3 conversations. The translation
-cache contains 111 complete, validated non-English clear conversations at this
-boundary, including six records translated for this regeneration.
+The current local documents were generated with `--audit-cutoff 36565`. They
+contain 65 clear L5, 42 clear L4, and 206 clear L3 conversations. The translation
+cache contains 114 complete, validated non-English clear conversations at this
+boundary, including three records translated for this regeneration.
 
-The verified render comprises 23 manuscript pages, 899 L5-appendix pages, 766
-L4-appendix pages, and 2,599 L3-appendix pages. All 4,287 pages have consistent
+The verified render comprises 23 manuscript pages, 935 L5-appendix pages, 794
+L4-appendix pages, and 2,693 L3-appendix pages. All 4,445 pages have consistent
 dimensions, no blank page, and no content touching the render boundary.
