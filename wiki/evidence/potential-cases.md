@@ -11,6 +11,14 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 35,144
+
+The 71-candidate round retained 54 potentials: 21 L1 capability extensions, 30 L2 project or possession extensions, one incomplete L3 representation, and two incomplete L4 processes. As in previous rounds, broad consumer scope captures learning, creative production, software, ventures, workplace activity, and personal advice, while level assignment still turns on proximity to the self and direct process evidence.
+
+The higher-level boundaries are especially useful. `f806360ff5d9cb1eeccb5199` contains negotiation around identity recognition but does not complete acceptance and re-entry of an AI-produced representation, so it remains potential L3. `2351b4c3dd3a786833e6aa2` connects landlord communication with personal interpretation, and `06cd6557993b664c0240814b` solicits assessment of the consumer's way of asking questions; both are self-relevant but lack sufficiently direct uptake of a distinct AI-originated self-understanding, so they remain potential L4.
+
+Automated-clear `11a21c62ff690bd7f216cc41` is instead potential L2. It develops a personal knowledge-management project, but the later strategy does not adopt and recursively apply an AI-produced understanding of the consumer. This case distinguishes an identity-adjacent owned system from reflexive self-extension.
+
 # Potentials added through v5 record 32,747
 
 The 65-case round retained 54 potentials: fifteen L1 capability extensions, 31 L2 project/possession extensions, two incomplete L3 representations, and six incomplete L4 reflexive pathways. The L2 concentration includes owned software, technical R&D, creative writing, businesses, research articles, political-group strategy, media brands, and local AI projects.

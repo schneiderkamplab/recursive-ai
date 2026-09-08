@@ -11,6 +11,16 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 35,144
+
+The 71-candidate round added four clear cases: one L3 representation and three L4 reflexive extensions. No new case reached L5.
+
+The L3 case `c49895f60ba21ed21da83ae0` concerns an actual employee's representation in an HR email about duties and classification. The consumer rejects the first version and recursively rebuilds the account, making this negotiated self-representation rather than a changed self-understanding.
+
+Three cases show AI formulations entering the consumer's interpretation of self. In `1a151a226b41fab9360a0198`, the consumer adopts the AI's security-and-comfort formulation of a personal practice and re-enters it to seek deeper psychological understanding. In `7b99fa5d1e26db35f7ad75b2`, the consumer negotiates AI assessments of professional and personality weaknesses, corrects unsupported inferences, and uses the disputed and revised assessment to investigate how they present to others. In `3cb315c9c273871544e1c035`, the consumer externalizes a nonhuman or disembodied self-conception, corrects the AI's outsider and mortality framings, develops a coping interpretation, and makes that negotiated account a premise for further reflection. Classification records only explicit transcript content and does not infer diagnosis or a stable hidden identity.
+
+These are L4 rather than L5 because the interaction evidences adoption and recursive application of self-understanding, but not a newly AI-configured course of consequential intended action. In `1a151a226b41fab9360a0198`, especially, the action goal preceded the AI formulation.
+
 # Clear cases added through v5 record 32,747
 
 Nine cases survived or were recovered as clear. Four L5 cases show AI formulations entering consequential intended or performed arrangements: return-to-work mentor searching (`4998a2b2fdb492139678d990`), a configured and reportedly worn feminine presentation (`da0519345895803019003904`), organizational reporting under threat (`a35923422b1bfe67639cb6b6`), and termination of an AI interaction to enact a recursively developed non-exploitation ethic (`9d306f75ca4fb913b378d024`). The last is especially useful because the AI-consumption relationship is both the site and object of enactment.

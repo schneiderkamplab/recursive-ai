@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Added negatives through v5 record 35,144
+
+Thirteen retrieved candidates were assigned L0/none. Ten are fictional, role-play, or AI-persona processes whose apparent selves and recursive changes do not refer to the actual consumer (`0dcd7e2fdd10d8b364b5536d`, `a70d0ce04f6ff230e1ab2368`, `39422410c84e00aece0003c2`, `1c9fc1048ed20d78db13a486`, `1995305f37b25eeca3efe7e3`, `f206c3a71e29c138d6125cd0`, `28df0bd6cc4b5b1f0a1b0219`, `ef702a0a93212dcc5b3ec97f`, `c2b34b18c268fc7d095a1811`, `7c5edb1878889fd855e5ad34`). They reinforce that first-person language, continuity, correction, and consequential plot action do not establish consumer self-extension without referent evidence.
+
+Two further cases (`c559b43b195057d80cae60d2`, `e640084427322f8d45c6ae05`) are disconnected or assistant-hallucinated exchanges rather than coherent extension processes. In `99608e3c7c8c9b112d30b5d5`, assistant failure prevents even a defensible capability-extension process. These failures are analytically distinct from referent errors but converge on the same L0 outcome.
+
 # Added negatives through v5 record 32,747
 
 Two automated clears were reduced to L0/none. `2ed8a0375677fdf353173ff4` is a serial magical body-swap story whose gendered, relational, and maternal changes belong to named fictional characters. `179ff3e002c79728983e7f06` constructs a detailed fictional adult persona and then conducts an explicit sexual role-play with that persona. Rich identity detail, correction, consent negotiation, and repeated interaction do not establish actual-consumer self-extension when the represented self is stipulated as a fictional character.
