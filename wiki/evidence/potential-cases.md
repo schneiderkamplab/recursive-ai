@@ -11,6 +11,14 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 36,285
+
+The 88-candidate round retained 74 potentials: 27 L1 capability extensions, 42 L2 project or possession extensions, four incomplete L3 representations, and one incomplete L4 reflexive process. The large L2 group again spans owned software, creative, research, entrepreneurial, educational, and workplace projects. This supports the broad consumer scope while preserving the distinction between recursive co-production of an owned artifact and recursive extension closer to the self.
+
+The higher-level boundaries identify several useful forms of incompleteness. An Italian author corrects an AI-fabricated bibliography and establishes authorship, but the assistant fails before a revised representation is accepted and re-entered (`ee412c96c511812991e463a9`). Two substantially overlapping conversations ask AI to connect a high-school student's literature experience to a computer-engineering possible self and hoped-for positive impact, but end before uptake (`f4b52bcef8eeb2356dd46e5f`, `13c08bfd2a8ac2cb93e9ef31`). Résumé fragments in `97f95332f3bca9ec8055358d` likewise lack acceptance and reuse of the generated self-representation.
+
+Conversation `beefc595ba9cd4d422e6d4a8` is potential L4: a parent asks about a child's autism and then considers their own childhood, but the AI reflection about the consumer is not subsequently adopted and recursively applied. The record supports neither a diagnosis nor an inferred hidden identity. Two automated L4 clears were reduced to L1 because fragmented crypto, investment, engineering, or answer-grading exchanges did not contain a coherent self-assessment chain (`c44f3a38fdfe4263e2a85bd5`, `8e18f21cad7e5178997b85ad`).
+
 # Potentials added through v5 record 35,144
 
 The 71-candidate round retained 54 potentials: 21 L1 capability extensions, 30 L2 project or possession extensions, one incomplete L3 representation, and two incomplete L4 processes. As in previous rounds, broad consumer scope captures learning, creative production, software, ventures, workplace activity, and personal advice, while level assignment still turns on proximity to the self and direct process evidence.

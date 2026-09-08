@@ -11,6 +11,16 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 36,285
+
+The 88-candidate round added nine clear cases: six L3 representations, one L4 reflexive extension, and two L5 enacted or possible-self extensions.
+
+The two L5 cases make the prospective-enactment boundary especially visible. In `cd975044608ba4d533c39bc4`, a burned-out former coach weighs mental-health and holistic identities, explicitly adopts the AI-mediated holistic-coach positioning, and carries it into a value proposition, target market, pricing, and marketing choices. In `fae06a651dc87e023ad30366`, a consumer recursively configures a daily arrangement around reported energy constraints, prayer, family, business, illustration, exercise, and creativity, then prepares the accepted arrangement for Google Calendar. Neither classification depends on proof that later offline events occurred: the theoretically relevant enactment is the consumer's uptake and application of an AI-configured possible self or self-understanding within consequential arrangements.
+
+Conversation `2ed09912c9d52bfe28f3dec5` is clear L4. After asking what a flirtatious message implies about how they are perceived, the consumer takes up the AI's unsupported femininity formulation and recursively develops it into a question about being a woman. The classification records AI-mediated self-interpretation; it does not validate the inference or establish transition enactment.
+
+The six L3 cases concern negotiated actual-user representation across a rule-bound AI relationship (`0e7cbcaa19e1be085b6e55f6`), an electrical engineer's LinkedIn profile (`ea4403c76ead8d20891a90ff`), a customized romantic AI-companion relation (`ba2b415a819c495105f4c010`), a Tibetan-community college-application narrative (`e79303f9e40f6519a710ed03`), a game master's account of actual responsibilities and player relations (`db5459bf80867bc5b087b1c1`), and a farewell message accompanying an actual company departure and relocation (`23009b74acc4dbab6e8e63f7`). Their settings include personal, relational, educational, occupational, creative, and marketplace consumption, but classification rests on a four-stage representational chain rather than the setting label.
+
 # Clear cases added through v5 record 35,144
 
 The 71-candidate round added four clear cases: one L3 representation and three L4 reflexive extensions. No new case reached L5.

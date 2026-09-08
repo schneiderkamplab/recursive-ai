@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Added negatives through v5 record 36,285
+
+Five retrieved candidates were assigned L0/none. Four are referent failures: a school-romance light-novel game (`5440ba07e9a9979051ffbb0d`), third-party praise embedded in grandson role-play (`e12b6b2c60eb697e623bac63`), explicit fictional-character role-play (`a76a7b23e10ad281193a8d74`), and a medieval game centered on a stipulated fifteen-year-old character (`fd556b11ef8f0414ee40a7d3`). Their first-person continuity and apparent development remain inside fictional or assigned roles rather than extending the actual consumer.
+
+Conversation `299af12cb7a2e7587e0969e1` is a fragmented model-failure case in which apparent self-reflection belongs largely to the AI persona and no coherent consumer-extension process can be reconstructed. Together, these cases reinforce the need to establish the referent and interaction coherence before interpreting lexical self-reference as recursive extension.
+
 # Added negatives through v5 record 35,144
 
 Thirteen retrieved candidates were assigned L0/none. Ten are fictional, role-play, or AI-persona processes whose apparent selves and recursive changes do not refer to the actual consumer (`0dcd7e2fdd10d8b364b5536d`, `a70d0ce04f6ff230e1ab2368`, `39422410c84e00aece0003c2`, `1c9fc1048ed20d78db13a486`, `1995305f37b25eeca3efe7e3`, `f206c3a71e29c138d6125cd0`, `28df0bd6cc4b5b1f0a1b0219`, `ef702a0a93212dcc5b3ec97f`, `c2b34b18c268fc7d095a1811`, `7c5edb1878889fd855e5ad34`). They reinforce that first-person language, continuity, correction, and consequential plot action do not establish consumer self-extension without referent evidence.
