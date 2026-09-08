@@ -102,7 +102,7 @@ atomically rewrites the file when an existing translation changes, and uses
 advisory read/write and single-translator locks.
 
 ```bash
-python scripts/generate_paper.py --audit-cutoff 36565
+python scripts/generate_paper.py --audit-cutoff 36773
 ```
 
 Outputs are `paper/draft.docx`, `paper/appendix-l5.docx`,

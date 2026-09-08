@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Added negatives through v5 record 36,773
+
+Two retrieved role-play cases were assigned L0/none. Automated-clear `9c9f139a24381f72bfad926b` sustains an alien weight-gain and feeding fantasy for 136 exchanges; its first-person causal account at A101 represents the fictional assistant character, and U101 merely continues that role-play. Conversation `b0ff27152f6e4b7b8fdf97fd` is an explicitly fictional sexual teacher scenario. Neither transcript represents the actual consumer, regardless of length, affect, first-person grammar, correction, or narrative continuity.
+
 # Added negative through v5 record 36,565
 
 Conversation `cb82557d745c5cfd8cb31f2b` is L0/none. It begins as an explicitly requested sexualized neighbor role-play; subsequent corrections apply to the assigned character rather than the actual consumer, and a later model failure repeats embedded transcript material. The case reinforces two separate safeguards: verify the self-referent before coding identity development, and do not treat generated repetition as recursive uptake.

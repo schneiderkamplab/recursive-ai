@@ -11,6 +11,14 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 36,773
+
+The 21-candidate round retained nineteen potentials: eleven L1 capability extensions, six L2 project or possession extensions, one incomplete L3 representation, and one incomplete L4 reflexive process. The L2 cases include an owned federated-learning framework, a real-estate project and its client chatbot, a student's FiM++ interpreter, a Unity game, a German online-store venture, and a jointly configured food experiment.
+
+Two boundaries sharpen the higher levels. In `976b08a9485e55d53fb64c85`, the AI represents the actual consumer's close family and adviser relationships in acknowledgments, but no generated formulation is demonstrably accepted and reused, leaving potential L3. In `01be08cee4240d5b649c2846`, the consumer takes up the AI-invented possessive term “my HeartFifthDensity,” but the same turn cannot supply both uptake and a later recursive re-entry, leaving potential L4.
+
+Conversation `2465a8cddd4bc0600c324a0f` is a theoretically useful L2 case. The consumer reports making and eating the AI-originated “Ice Cream Flesh” concept, credits the AI with creating it, and then asks the AI to decide whether their shared object should include chocolate before applying the choice. This is unusually direct movement from AI ideation into a consumer-configured object, but the recursive locus remains the product rather than the self.
+
 # Potentials added through v5 record 36,565
 
 The 20-candidate round retained eighteen potentials: eight L1 capability extensions, nine L2 project or possession extensions, and one incomplete L3 representation. The L2 cases include owned software, a live website integration, a thesis, municipal projects, a snack-delivery venture, a fantasy story, and a documentary series. Educational and occupational settings remain within the broad consumer scope, but context alone does not elevate the extension level.
