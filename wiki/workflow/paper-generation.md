@@ -3,7 +3,7 @@ type: How-to
 title: Generating the Paper and Evidence Appendices
 description: Reproducible creation of the live manuscript and complete clear L3 through L5 conversation appendices.
 tags: [paper, appendix, translation, docx, reproducibility]
-generated: { by: codex/gpt-5, at: "2026-09-07T10:00:00Z" }
+generated: { by: codex/gpt-5, at: "2026-09-08T00:00:00Z" }
 status: draft
 sources:
   - id: paper-generator
@@ -19,9 +19,9 @@ sources:
 The generator reads the corpus manifest, normalized 10-by-10 corpus, append-only
 v5 audit and error ledger, and all three canonical manual-evidence JSONLs. It
 derives automated totals, provisional labels, candidate retrieval, pending
-manual review, final manual labels, and level counts at generation time. A
-running audit should be paused when a manuscript must represent one frozen
-checkpoint.
+manual review, final manual labels, and level counts at generation time. Pass
+`--audit-cutoff N` to freeze counts, candidate membership, and appendix evidence
+at a fully reconciled reporting boundary while the production audit continues.
 
 # Translation
 
@@ -71,3 +71,12 @@ checks title hierarchy, chat and bilingual layouts, table splitting, figure
 legibility, page numbering, blank pages, clipping, and source-turn continuity.
 The Word files contain complete public-corpus transcripts and therefore remain
 outside the public Git repository.
+
+The current local documents were generated with `--audit-cutoff 34389`. They
+contain 62 clear L5, 38 clear L4, and 199 clear L3 conversations. The translation
+cache contains 111 complete, validated non-English clear conversations at this
+boundary, including six records translated for this regeneration.
+
+The verified render comprises 23 manuscript pages, 899 L5-appendix pages, 766
+L4-appendix pages, and 2,599 L3-appendix pages. All 4,287 pages have consistent
+dimensions, no blank page, and no content touching the render boundary.

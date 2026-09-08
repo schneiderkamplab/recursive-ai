@@ -409,9 +409,15 @@ def _read_jsonl(path, *, allow_trailing_partial=False):
     return records
 
 
-def _campaign_state():
+def _campaign_state(audit_cutoff=None):
     manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
     automated = _read_jsonl(AUDIT_PATH, allow_trailing_partial=True)
+    if audit_cutoff is not None:
+        if audit_cutoff < 0 or audit_cutoff > len(automated):
+            raise RuntimeError(
+                f"Audit cutoff {audit_cutoff:,} is outside the committed range 0–{len(automated):,}"
+            )
+        automated = automated[:audit_cutoff]
     errors = _read_jsonl(ERROR_PATH, allow_trailing_partial=True)
     automated_ids = [record["id"] for record in automated]
     if len(automated_ids) != len(set(automated_ids)):
@@ -438,7 +444,11 @@ def _campaign_state():
         if record["conversation_id"] in candidate_ids
     ]
     reviewed_ids = {record["conversation_id"] for record in campaign_manual}
-    clear_records = manual_records["clear"]
+    clear_records = [
+        record
+        for record in campaign_manual
+        if record["assessment"]["classification"] == "clear"
+    ]
     return {
         "captured_at": datetime.now().astimezone(),
         "corpus_total": int(manifest["total_conversations"]),
@@ -1321,10 +1331,15 @@ def main():
     parser = argparse.ArgumentParser(description="Generate the live paper draft and evidence appendices.")
     parser.add_argument("--draft-only", action="store_true")
     parser.add_argument("--appendix-level", type=int, choices=(3, 4, 5), action="append")
+    parser.add_argument(
+        "--audit-cutoff",
+        type=int,
+        help="Freeze document counts and selected evidence at the first N committed v5 records.",
+    )
     args = parser.parse_args()
     if args.draft_only and args.appendix_level:
         parser.error("--draft-only cannot be combined with --appendix-level")
-    campaign = _campaign_state()
+    campaign = _campaign_state(args.audit_cutoff)
     if not args.appendix_level:
         build_draft(campaign)
     if not args.draft_only:

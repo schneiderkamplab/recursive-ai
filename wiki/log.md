@@ -1,5 +1,12 @@
 # Bundle Update Log
 
+## 2026-09-08
+
+* **Paper and appendices**: Regenerated `paper/draft.docx`, `paper/appendix-l5.docx`, `paper/appendix-l4.docx`, and `paper/appendix-l3.docx` at the fully reconciled line-34,389 reporting boundary. The manuscript reports 5,185 retrieved and manually adjudicated candidates, with 299 clear, 4,719 potential, and 167 none outcomes. The appendices contain every campaign-member clear case at that boundary: L5=62, L4=38, and L3=199.
+* **Translation**: Completed and validated faithful local `gemma4:26b` translations for the six newly required non-English clear conversations. The appendix translation cache now has all 111 required conversations with complete message-level coverage, source hashes, and 26B model provenance.
+* **Document QA**: Rendered and inspected the four Word files as 4,287 page images: 23 manuscript pages, 899 L5 pages, 766 L4 pages, and 2,599 L3 pages. Automated page inspection found consistent dimensions, no blank pages, and no content touching a render boundary; visual sampling confirmed intact chat bubbles, bilingual tables, figures, hierarchy, and pagination.
+* **Operations**: Temporarily stopped the audit at 34,501 committed records so the four-context model service could translate appendix material without competing inference queues. The checkpoint contained 34,501 unique parseable records and zero recorded errors. Resumed the unchanged append-only v5 audit from exactly that checkpoint with 9,641 conversations pending, using the detached `recursive-v5-ollama` and `recursive-v5-audit` sessions and the agreed `gemma4:26b`, four-worker, 131,072-token configuration.
+
 ## 2026-09-07
 
 * **Operations**: Resumed the append-only v5 production audit from the fully reconciled 34,389/44,142 checkpoint with 9,753 conversations pending and zero recorded errors. Detached `recursive-v5-ollama` and `recursive-v5-audit` sessions use the unchanged dedicated port-11434 `gemma4:26b`, four-worker, four-parallel-context, 131,072-token configuration. The first three new records committed successfully and were automated none; combined model, server, and audit RSS was approximately 37.2 GiB, below the 60 GB ceiling.
