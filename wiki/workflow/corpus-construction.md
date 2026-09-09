@@ -1,8 +1,8 @@
 ---
 type: Data Pipeline
 title: Long-Conversation Corpus Construction
-description: Normalization and inclusion pipeline producing 44,142 conversations with at least ten user and ten assistant messages.
-tags: [corpus, data-pipeline, wildchat, lmsys, thoughttrace, realuser]
+description: Normalization and inclusion pipeline producing 91,590 conversations with at least ten user and ten assistant messages.
+tags: [corpus, data-pipeline, wildchat, lmsys, thoughttrace, realuser, sharegpt, prism, sharechat]
 generated: { by: codex/gpt-5, at: "2026-08-24T22:37:07Z" }
 status: stable
 sources:
@@ -24,7 +24,7 @@ The four publicly obtainable source releases are downloaded by [download_dataset
 
 The RealUser source is the public 600-conversation preview, not the unavailable full 2.2-million-conversation corpus. LMSYS access can depend on the current upstream access policy and the user's acceptance of its dataset terms.
 
-# Sources and counts
+# Original v5 tranche
 
 | Dataset | Conversations | Characters | Maximum characters |
 |---|---:|---:|---:|
@@ -34,11 +34,27 @@ The RealUser source is the public 600-conversation preview, not the unavailable 
 | ChatGPT-RealUser-2.2M preview | 22 | 614,347 | 85,276 |
 | **Total** | **44,142** | **860,930,014** | — |
 
-These are corpus-build counts, not estimates for the full RealUser dataset.[^corpus-manifest]
+These are observed corpus-build counts, not estimates for the full RealUser dataset.[^corpus-manifest]
+
+# Expanded canonical v5 corpus
+
+The [v5 expansion](corpus-expansion.md) retains the original tranche as the canonical file prefix and appends exact-deduplicated records from four further source releases.
+
+| Dataset | Conversations | Characters | Maximum characters |
+|---|---:|---:|---:|
+| WildChat-1M | 24,498 | 524,899,120 | 546,717 |
+| LMSYS-Chat-1M | 19,556 | 334,004,117 | 6,640,848 |
+| ThoughtTrace | 66 | 1,412,430 | 77,565 |
+| ChatGPT-RealUser-2.2M preview | 22 | 614,347 | 85,276 |
+| ShareGPT-X | 8,910 | 491,144,557 | 2,111,151 |
+| PRISM Alignment | 76 | 596,894 | 20,865 |
+| ShareChat | 12,681 | 1,111,476,754 | 4,035,959 |
+| WildChat-4.8M, non-overlapping subset | 25,781 | 1,507,222,993 | 1,091,961 |
+| **Total** | **91,590** | **3,971,371,212** | — |
 
 # Normalization
 
-Only `user` and `assistant` messages are retained. Content is coerced to strings. Each normalized record contains dataset, source identifier, exchange and turn counts, character count, messages, and available source metadata such as model, language, source file, or user ID.
+Only normalized `user` and `assistant` messages are retained. Source roles `human`, `gpt`, `model`, and `llm` are mapped accordingly, and content is coerced to strings. Each normalized record contains dataset, source identifier, exchange and turn counts, character count, messages, and available source metadata such as model, language, source file, platform, topic, or user ID. PRISM retains only the participant-selected model reply at each exchange.
 
 # Stable identifier
 
@@ -46,7 +62,7 @@ The audit ID is the first 24 hexadecimal characters of SHA-256 over `dataset + N
 
 # Output
 
-The normalized corpus is [long_conversations_10x10.jsonl.gz](../../classification/long_conversations_10x10.jsonl.gz); summary metadata is [long_conversations_manifest.json](../../classification/long_conversations_manifest.json).
+The canonical expanded v5 corpus is [long_conversations_10x10.jsonl.gz](../../classification/long_conversations_10x10.jsonl.gz); summary and expansion metadata are in [long_conversations_manifest.json](../../classification/long_conversations_manifest.json). Both are generated and excluded from Git because the corpus contains research transcripts.
 
 [^preparation-script]: Corpus preparation implementation
 [^corpus-manifest]: Generated corpus manifest

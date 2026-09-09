@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Normalize ShareGPT-X, PRISM, and ShareChat into a deduplicated 10x10 expansion.
+"""Expand the canonical v5 10x10 corpus with four deduplicated source releases.
 
-The expansion is deliberately separate from the frozen corpus used by the v5
-audit. Exact normalized transcripts already present in that corpus, or repeated
-within the expansion, are counted in the manifest and omitted from the output.
+The original v5 records remain the output prefix. ShareGPT-X, PRISM, ShareChat,
+and new WildChat-4.8M transcripts are appended under the same v5 instrument.
+The canonical corpus is replaced atomically only after a complete successful
+build, and rerunning against an already-expanded corpus is idempotent.
 """
 
 from __future__ import annotations
@@ -20,14 +21,32 @@ from collections.abc import Iterable, Iterator
 from pathlib import Path
 
 import ijson
+import pyarrow.parquet as parquet
 
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW = ROOT / "raw"
-EXISTING = ROOT / "classification" / "long_conversations_10x10.jsonl.gz"
-OUTPUT = ROOT / "classification" / "corpus_expansion_10x10.jsonl.gz"
-MANIFEST = ROOT / "classification" / "corpus_expansion_manifest.json"
+CORPUS = ROOT / "classification" / "long_conversations_10x10.jsonl.gz"
+MANIFEST = ROOT / "classification" / "long_conversations_manifest.json"
 MIN_MESSAGES_PER_ROLE = 10
+BASE_DATASETS = {
+    "WildChat-1M",
+    "LMSYS-Chat-1M",
+    "ThoughtTrace",
+    "ChatGPT-RealUser-2.2M-preview",
+}
+EXPANSION_DATASETS = {
+    "ShareGPT-X",
+    "PRISM-alignment",
+    "ShareChat",
+    "WildChat-4.8M",
+}
+EXPANSION_SOURCE_RECORD_COUNTS = {
+    "ShareGPT-X": 91_810,
+    "PRISM-alignment": 8_011,
+    "ShareChat": 129_587,
+    "WildChat-4.8M": 3_199_860,
+}
 csv.field_size_limit(sys.maxsize)
 
 
@@ -90,13 +109,26 @@ def _qualifies(messages: list[dict[str, str]]) -> bool:
     )
 
 
-def _existing_transcript_hashes(path: Path) -> set[str]:
+def _base_state(
+    path: Path,
+) -> tuple[set[str], Counter[str], Counter[str], Counter[str]]:
     hashes: set[str] = set()
+    counts: Counter[str] = Counter()
+    characters: Counter[str] = Counter()
+    maxima: Counter[str] = Counter()
     with gzip.open(path, "rt", encoding="utf-8") as source:
         for line in source:
             record = json.loads(line)
+            dataset = record["dataset"]
+            if dataset in EXPANSION_DATASETS:
+                continue
+            if dataset not in BASE_DATASETS:
+                raise ValueError(f"Unexpected dataset {dataset!r} in base corpus")
             hashes.add(_transcript_hash(record["messages"]))
-    return hashes
+            counts[dataset] += 1
+            characters[dataset] += record["characters"]
+            maxima[dataset] = max(maxima[dataset], record["characters"])
+    return hashes, counts, characters, maxima
 
 
 def _sharegpt_x_records(path: Path) -> Iterator[dict]:
@@ -243,21 +275,45 @@ def _sharechat_records(directory: Path) -> Iterator[dict]:
             yield from _sharechat_turn_rows(path, path.stem)
 
 
+def _wildchat_4_8m_records(directory: Path) -> Iterator[dict]:
+    paths = sorted(directory.glob("*.parquet"))
+    if len(paths) != 86:
+        raise RuntimeError(f"Expected 86 WildChat-4.8M shards, found {len(paths)}")
+    for path in paths:
+        parquet_file = parquet.ParquetFile(path)
+        for batch in parquet_file.iter_batches(
+            columns=["conversation_hash", "conversation", "turn", "model", "language"],
+            batch_size=2048,
+        ):
+            for row in batch.to_pylist():
+                if int(row["turn"] or 0) < MIN_MESSAGES_PER_ROLE:
+                    continue
+                messages = _clean_messages(row["conversation"] or [])
+                if _qualifies(messages):
+                    yield _record(
+                        "WildChat-4.8M",
+                        str(row["conversation_hash"]),
+                        messages,
+                        model=row.get("model"),
+                        language=row.get("language"),
+                        source_file=path.name,
+                    )
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--raw-dir", type=Path, default=RAW)
-    parser.add_argument("--existing", type=Path, default=EXISTING)
-    parser.add_argument("--output", type=Path, default=OUTPUT)
+    parser.add_argument("--base", type=Path, default=CORPUS)
+    parser.add_argument("--output", type=Path, default=CORPUS)
     parser.add_argument("--manifest", type=Path, default=MANIFEST)
     args = parser.parse_args()
 
-    existing_hashes = _existing_transcript_hashes(args.existing)
-    seen_hashes = set(existing_hashes)
+    base_hashes, counts, characters, maxima = _base_state(args.base)
+    seen_hashes = set(base_hashes)
     included: Counter[str] = Counter()
     qualifying: Counter[str] = Counter()
-    existing_duplicates: Counter[str] = Counter()
+    base_duplicates: Counter[str] = Counter()
     expansion_duplicates: Counter[str] = Counter()
-    characters: Counter[str] = Counter()
     sharechat_qualifying_by_platform: Counter[str] = Counter()
     sharechat_included_by_platform: Counter[str] = Counter()
     sources = (
@@ -272,43 +328,71 @@ def main() -> None:
             _prism_records(args.raw_dir / "prism" / "conversations.jsonl"),
         ),
         ("ShareChat", _sharechat_records(args.raw_dir / "sharechat")),
+        ("WildChat-4.8M", _wildchat_4_8m_records(args.raw_dir / "wildchat_4_8m")),
     )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    with gzip.open(args.output, "wt", encoding="utf-8", compresslevel=6) as target:
-        for dataset, records in sources:
-            for record in records:
-                qualifying[dataset] += 1
-                if dataset == "ShareChat":
-                    sharechat_qualifying_by_platform[str(record.get("platform"))] += 1
-                transcript_hash = _transcript_hash(record["messages"])
-                if transcript_hash in existing_hashes:
-                    existing_duplicates[dataset] += 1
-                    continue
-                if transcript_hash in seen_hashes:
-                    expansion_duplicates[dataset] += 1
-                    continue
-                seen_hashes.add(transcript_hash)
-                target.write(json.dumps(record, ensure_ascii=False) + "\n")
-                included[dataset] += 1
-                if dataset == "ShareChat":
-                    sharechat_included_by_platform[str(record.get("platform"))] += 1
-                characters[dataset] += record["characters"]
+    temporary_output = args.output.with_name(args.output.name + ".tmp")
+    temporary_output.unlink(missing_ok=True)
+    try:
+        with gzip.open(
+            temporary_output, "wt", encoding="utf-8", compresslevel=6
+        ) as target:
+            with gzip.open(args.base, "rt", encoding="utf-8") as base_source:
+                for line in base_source:
+                    record = json.loads(line)
+                    if record["dataset"] in BASE_DATASETS:
+                        target.write(line if line.endswith("\n") else line + "\n")
+
+            for dataset, records in sources:
+                for record in records:
+                    qualifying[dataset] += 1
+                    if dataset == "ShareChat":
+                        sharechat_qualifying_by_platform[
+                            str(record.get("platform"))
+                        ] += 1
+                    transcript_hash = _transcript_hash(record["messages"])
+                    if transcript_hash in base_hashes:
+                        base_duplicates[dataset] += 1
+                        continue
+                    if transcript_hash in seen_hashes:
+                        expansion_duplicates[dataset] += 1
+                        continue
+                    seen_hashes.add(transcript_hash)
+                    target.write(json.dumps(record, ensure_ascii=False) + "\n")
+                    included[dataset] += 1
+                    counts[dataset] += 1
+                    characters[dataset] += record["characters"]
+                    maxima[dataset] = max(maxima[dataset], record["characters"])
+                    if dataset == "ShareChat":
+                        sharechat_included_by_platform[str(record.get("platform"))] += 1
+        temporary_output.replace(args.output)
+    except BaseException:
+        temporary_output.unlink(missing_ok=True)
+        raise
 
     manifest = {
         "minimum_user_messages": MIN_MESSAGES_PER_ROLE,
         "minimum_assistant_messages": MIN_MESSAGES_PER_ROLE,
-        "frozen_v5_corpus_modified": False,
-        "existing_exact_transcript_hashes": len(existing_hashes),
-        "qualifying_before_deduplication": dict(qualifying),
-        "excluded_as_exact_duplicate_of_existing_corpus": dict(existing_duplicates),
-        "excluded_as_exact_duplicate_within_expansion": dict(expansion_duplicates),
-        "included": dict(included),
-        "sharechat_qualifying_by_platform": dict(sharechat_qualifying_by_platform),
-        "sharechat_included_by_platform": dict(sharechat_included_by_platform),
+        "campaign": "v5 expanded",
+        "expansion_source_record_counts": EXPANSION_SOURCE_RECORD_COUNTS,
+        "counts": dict(counts),
         "characters": dict(characters),
-        "total_included": sum(included.values()),
+        "maximum_characters": dict(maxima),
+        "total_conversations": sum(counts.values()),
+        "total_characters": sum(characters.values()),
         "output": str(args.output),
+        "expansion": {
+            "base_conversations": sum(counts[dataset] for dataset in BASE_DATASETS),
+            "base_exact_transcript_hashes": len(base_hashes),
+            "qualifying_before_deduplication": dict(qualifying),
+            "excluded_as_exact_duplicate_of_base": dict(base_duplicates),
+            "excluded_as_exact_duplicate_within_expansion": dict(expansion_duplicates),
+            "included": dict(included),
+            "total_included": sum(included.values()),
+            "sharechat_qualifying_by_platform": dict(sharechat_qualifying_by_platform),
+            "sharechat_included_by_platform": dict(sharechat_included_by_platform),
+        },
     }
     args.manifest.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))

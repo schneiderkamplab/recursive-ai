@@ -5,13 +5,10 @@ are tracked so the campaign can be resumed; all transcripts, historical runs,
 calibrations, reports, and logs remain ignored. The production pipeline creates
 or expects:
 
-- `long_conversations_10x10.jsonl.gz`: normalized conversations, ignored;
-- `long_conversations_manifest.json`: generated aggregate corpus manifest,
-  ignored;
-- `corpus_expansion_10x10.jsonl.gz`: normalized, exact-deduplicated ShareGPT-X,
-  PRISM, and ShareChat expansion, ignored;
-- `corpus_expansion_manifest.json`: expansion inclusion and overlap counts,
-  ignored;
+- `long_conversations_10x10.jsonl.gz`: canonical expanded v5 corpus of 91,590
+  exact-deduplicated normalized conversations, ignored;
+- `long_conversations_manifest.json`: generated aggregate and expansion
+  manifest, ignored;
 - `gemma4_26b_a4b_audit_v5_extension_levels.jsonl`: tracked append-only
   automated audit;
 - `gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl`: tracked retryable

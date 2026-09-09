@@ -18,7 +18,7 @@ This Open Knowledge Format bundle documents the concepts, prompts, data, impleme
 
 ## Bundle status
 
-The v5 automated audit is complete: all 44,142 normalized conversations were screened with zero recorded errors. Automated screening retrieved 6,006 clear or potential candidates, and every candidate was manually adjudicated exactly once. Final manual campaign outcomes are 344 clear, 5,426 potential, and 236 none; their level distribution is L0=236, L1=2,726, L2=2,273, L3=469, L4=200, and L5=102. The separate calibration record is excluded. Process figures, the manuscript draft, and the complete clear L3–L5 appendices are generated consistently from the final 44,142-record boundary.
+The canonical v5 corpus now contains 91,590 conversations. Its original 44,142-record tranche has been screened with zero recorded errors: automated screening retrieved 6,006 clear or potential candidates, and every one was manually adjudicated exactly once. Outcomes for that completed tranche are 344 clear, 5,426 potential, and 236 none; their level distribution is L0=236, L1=2,726, L2=2,273, L3=469, L4=200, and L5=102. The separate calibration record is excluded. The 47,448 exact-deduplicated additions are pending automated v5 screening and subsequent manual adjudication; they must not yet be included in substantive campaign outcome counts.
 
 ## Provenance
 

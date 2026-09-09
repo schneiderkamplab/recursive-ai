@@ -21,10 +21,10 @@ The pipeline uses pinned releases of:
 - ThoughtTrace; and
 - the public 600-conversation ChatGPT-RealUser-2.2M preview.
 
-A separately versioned expansion integrates ShareGPT-X, PRISM Alignment, and
-ShareChat. WildChat-4.8M is downloaded and compared with the existing
-WildChat-1M partition before any later inclusion. None of these records is
-silently mixed into the completed 44,142-record v5 campaign.
+The v5 campaign is expanded with ShareGPT-X, PRISM Alignment, ShareChat, and
+the non-overlapping portion of WildChat-4.8M. The canonical normalized corpus
+contains 91,590 exact-deduplicated conversations. The original 44,142 records
+remain its prefix, so their completed automated and manual results remain valid.
 
 The unavailable full RealUser-2.2M corpus is not used. Dataset licenses, terms,
 and access controls remain those of the upstream publishers. LMSYS may require
@@ -69,14 +69,13 @@ python -m pip install -r requirements.txt
    python scripts/prepare_long_conversations.py
    ```
 
-   To build the separate additional-source expansion and assess the successor
-   WildChat release:
+   To assess the successor WildChat release and expand the canonical v5 corpus:
 
    ```bash
    python scripts/download_datasets.py --dataset sharegpt-x --dataset prism --dataset sharechat --workers 4
-   python scripts/prepare_corpus_expansion.py
    python scripts/download_datasets.py --dataset wildchat-4.8m --workers 4
    python scripts/assess_wildchat_expansion.py
+   python scripts/prepare_corpus_expansion.py
    ```
 
 4. Start Ollama with the required model available, then run the v5 audit:
@@ -90,9 +89,9 @@ python -m pip install -r requirements.txt
    operated under a 60 GB memory ceiling. Do not run two processes that append
    to the same output file.
 
-   The audit accepts `--input` for a versioned expansion, but a non-default
-   input requires explicit separate `--output` and `--errors` paths. This guard
-   prevents appending expansion results to the canonical v5 JSONL.
+   The default command resumes the same append-only v5 JSONL. It recognizes the
+   44,142 completed IDs and processes only pending additions. A genuinely
+   alternate `--input` still requires explicit separate output and error paths.
 
 5. Human reviewers adjudicate all automated `clear` and `potential` candidates
    according to [`wiki/workflow/manual-review.md`](wiki/workflow/manual-review.md).

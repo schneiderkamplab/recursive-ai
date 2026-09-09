@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Measure new >=10x10 WildChat-4.8M conversations beyond the v5 corpus.
+"""Measure new >=10x10 WildChat-4.8M conversations beyond the original v5 tranche.
 
 The comparison reports both upstream ``conversation_hash`` overlap and an exact
-hash of normalized role/content sequences. It does not alter the frozen v5
-corpus or audit.
+hash of normalized role/content sequences. It is a read-only pre-integration
+assessment; ``prepare_corpus_expansion.py`` performs the canonical v5 merge.
 """
 
 from __future__ import annotations

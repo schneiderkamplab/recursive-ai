@@ -11,7 +11,7 @@ status: stable
 
 * [download_datasets.py](../../scripts/download_datasets.py) - Downloads the four original and four expansion source releases at pinned Hugging Face revisions, resumes partial transfers, and verifies expected byte sizes without persisting credentials.
 * [prepare_long_conversations.py](../../scripts/prepare_long_conversations.py) - Normalizes source corpora and selects ≥10×10 conversations.
-* [prepare_corpus_expansion.py](../../scripts/prepare_corpus_expansion.py) - Normalizes ShareGPT-X, the realized PRISM paths, and ShareChat; enforces actual 10×10 role counts and exact-transcript deduplication.
+* [prepare_corpus_expansion.py](../../scripts/prepare_corpus_expansion.py) - Atomically expands the canonical v5 corpus with ShareGPT-X, realized PRISM paths, ShareChat, and non-overlapping WildChat-4.8M conversations while enforcing actual 10×10 role counts and exact-transcript deduplication.
 * [assess_wildchat_expansion.py](../../scripts/assess_wildchat_expansion.py) - Measures WildChat-4.8M's qualifying yield and overlap with the frozen WildChat-1M partition by source ID and exact normalized transcript.
 * [audit_long_conversations_gemma.py](../../scripts/audit_long_conversations_gemma.py) - Live v5 exhaustive audit, exact rubric, schemas, chunking, and post-processing.
 * [generate_process_diagram.py](../../scripts/generate_process_diagram.py) - Generates a current PRISMA-style Mermaid flow from the corpus, audit, errors, and manual-evidence files while excluding manual calibration records that were not automated candidates.
@@ -31,8 +31,7 @@ Generated corpus files are documented in [classification/README.md](../../classi
 
 * `long_conversations_manifest.json` - Counts and character totals.
 * `long_conversations_10x10.jsonl.gz` - Normalized transcripts.
-* `corpus_expansion_manifest.json` - New-source inclusion and exact-duplicate counts.
-* `corpus_expansion_10x10.jsonl.gz` - Separate new-source transcripts; not part of completed v5.
+The canonical manifest also records source-specific expansion and duplicate counts.
 
 # Production output
 

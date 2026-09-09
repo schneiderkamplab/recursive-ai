@@ -38,7 +38,7 @@ Automated screening is recall-oriented for `potential` cases and precision-orien
 
 # Current corpus
 
-The normalized corpus contains 44,142 conversations and 860,930,014 characters from WildChat-1M, LMSYS-Chat-1M, ThoughtTrace, and the ChatGPT-RealUser-2.2M preview.[^corpus-manifest]
+The expanded canonical v5 corpus contains 91,590 conversations and 3,971,371,212 characters. Its original 44,142-record tranche comes from WildChat-1M, LMSYS-Chat-1M, ThoughtTrace, and the ChatGPT-RealUser-2.2M preview; 47,448 exact-deduplicated additions come from ShareGPT-X, PRISM Alignment, ShareChat, and the non-overlapping portion of WildChat-4.8M.[^corpus-manifest]
 
 [^corpus-manifest]: Normalized long-conversation corpus manifest
 

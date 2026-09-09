@@ -1,7 +1,7 @@
 ---
 type: Data Pipeline
 title: Versioned Corpus Expansion
-description: Provenance-preserving integration of three additional chat corpora and exact overlap assessment of WildChat-4.8M.
+description: Provenance-preserving integration of four additional source releases into the canonical v5 corpus.
 tags: [corpus, expansion, sharegpt-x, prism, sharechat, wildchat]
 generated: { by: codex/gpt-5, at: "2026-09-09T00:00:00Z" }
 status: stable
@@ -17,9 +17,9 @@ sources:
     title: WildChat overlap assessment
 ---
 
-# Separation from v5
+# Relationship to v5
 
-The completed 44,142-record v5 campaign remains frozen. Additional sources are written to a separate normalized expansion and require distinct automated output and error files. This preserves measurement provenance and prevents new records from being silently appended to the completed campaign.
+The additional sources expand the same v5 campaign because the prompt, schema, model, post-processing rules, and manual-review protocol are unchanged. The canonical normalized corpus now contains 91,590 conversations. Its first 44,142 records are the original completed tranche, whose automated and manual results remain unchanged; the 47,448 appended records are pending automated screening.
 
 # Integrated sources
 
@@ -40,28 +40,30 @@ Exact SHA-256 hashes of normalized role/content sequences exclude transcripts al
 | ShareChat | 12,721 | 40 | 12,681 |
 | **Total** | **21,707** | **40** | **21,667** |
 
-None of these exact transcripts duplicated a record in the frozen 44,142-conversation corpus. These counts describe corpus construction, not automated or manual classification.
+None of these exact transcripts duplicated a record in the original 44,142-conversation tranche. These counts describe corpus construction, not automated or manual classification.
 
 # WildChat-4.8M assessment
 
-WildChat-4.8M is downloaded and assessed separately because it is a successor release to an existing v5 source. The comparison reports both upstream `conversation_hash` overlap and exact normalized role/content overlap. Only records with at least ten actual user and ten actual assistant messages qualify. The assessment does not append WildChat-4.8M to the expansion automatically.
+WildChat-4.8M is assessed before integration because it is a successor release to an existing v5 source. The comparison reports both upstream `conversation_hash` overlap and exact normalized role/content overlap. Only records with at least ten actual user and ten actual assistant messages qualify. The preparation script then appends only non-overlapping records to the canonical v5 corpus.
 
-The pinned release contains 3,199,860 conversation rows. Of these, 47,563 rows qualify as 10×10. Exactly 21,781 match the frozen WildChat-1M partition by both source ID and exact normalized transcript. The remaining 25,782 rows contain one duplicate, leaving **25,781 unique qualifying conversations not already covered**. The agreement between ID-based and exact-transcript comparisons provides a useful cross-check; it is not assumed in the implementation.
+The pinned release contains 3,199,860 conversation rows. Of these, 47,563 rows qualify as 10×10. Exactly 21,781 match the original WildChat-1M partition by both source ID and exact normalized transcript. The remaining 25,782 rows contain one duplicate, leaving **25,781 unique qualifying conversations not already covered**. The agreement between ID-based and exact-transcript comparisons provides a useful cross-check; it is not assumed in the implementation.
 
 # Reproduction
 
 ```bash
 python scripts/download_datasets.py --dataset sharegpt-x --dataset prism --dataset sharechat --workers 4
-python scripts/prepare_corpus_expansion.py
 python scripts/download_datasets.py --dataset wildchat-4.8m --workers 4
 python scripts/assess_wildchat_expansion.py
+python scripts/prepare_long_conversations.py
+python scripts/prepare_corpus_expansion.py
 ```
 
-To run the unchanged v5 instrument over the expansion, explicit separate paths are mandatory:
+The normal preparation sequence first recreates the original four-source prefix and then atomically replaces it with the expanded canonical corpus. Rerunning the expansion step against an already-expanded corpus is idempotent: previously appended source records are discarded and reconstructed from the pinned raw releases.
+
+The unchanged v5 instrument resumes against the expanded canonical input and existing append-only output:
 
 ```bash
-python scripts/audit_long_conversations_gemma.py \
-  --input classification/corpus_expansion_10x10.jsonl.gz \
-  --output classification/gemma4_26b_a4b_audit_v5_corpus_expansion.jsonl \
-  --errors classification/gemma4_26b_a4b_audit_v5_corpus_expansion_errors.jsonl
+python scripts/audit_long_conversations_gemma.py --model gemma4:26b --workers 4
 ```
+
+The completed-ID check leaves the first 44,142 audit records untouched and selects the 47,448 new records as pending work.

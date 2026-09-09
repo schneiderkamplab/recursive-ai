@@ -17,7 +17,9 @@ RESULTS = ROOT / "results"
 TURN_DISTRIBUTION = RESULTS / "turn_distribution.json"
 CORPUS_MANIFEST = CLASSIFICATION / "long_conversations_manifest.json"
 AUTOMATED_AUDIT = CLASSIFICATION / "gemma4_26b_a4b_audit_v5_extension_levels.jsonl"
-AUTOMATED_ERRORS = CLASSIFICATION / "gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl"
+AUTOMATED_ERRORS = (
+    CLASSIFICATION / "gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl"
+)
 MANUAL_FILES = {
     "clear": CLASSIFICATION / "manually_reviewed_clear_examples.jsonl",
     "potential": CLASSIFICATION / "manually_reviewed_potential_examples.jsonl",
@@ -30,12 +32,20 @@ DATASET_ORDER = (
     "LMSYS-Chat-1M",
     "ThoughtTrace",
     "ChatGPT-RealUser-2.2M-preview",
+    "ShareGPT-X",
+    "PRISM-alignment",
+    "ShareChat",
+    "WildChat-4.8M",
 )
 DATASET_LABELS = {
     "WildChat-1M": "WildChat",
     "LMSYS-Chat-1M": "LMSYS",
     "ThoughtTrace": "ThoughtTrace",
     "ChatGPT-RealUser-2.2M-preview": "RealUser preview",
+    "ShareGPT-X": "ShareGPT-X",
+    "PRISM-alignment": "PRISM",
+    "ShareChat": "ShareChat",
+    "WildChat-4.8M": "WildChat-4.8M",
 }
 LEVEL_LABELS = {
     0: "L0 instrumental",
@@ -64,19 +74,27 @@ def _read_jsonl(path: Path, *, allow_trailing_partial: bool = False) -> list[dic
             try:
                 records.append(json.loads(line))
             except json.JSONDecodeError as error:
-                if allow_trailing_partial and line_number == len(lines) and not line.endswith("\n"):
+                if (
+                    allow_trailing_partial
+                    and line_number == len(lines)
+                    and not line.endswith("\n")
+                ):
                     # The production audit appends and flushes one JSON line at a
                     # time. A concurrent snapshot may observe the last write in
                     # progress; excluding that incomplete record is consistent
                     # with reporting the last fully committed audit line.
                     continue
-                raise ValueError(f"Invalid JSON in {path} at line {line_number}") from error
+                raise ValueError(
+                    f"Invalid JSON in {path} at line {line_number}"
+                ) from error
     return records
 
 
 def _raw_counts() -> dict[str, int]:
     summaries = _read_json(TURN_DISTRIBUTION)["summaries"]
-    source_counts = {item["dataset"]: int(item["total_conversations"]) for item in summaries}
+    source_counts = {
+        item["dataset"]: int(item["total_conversations"]) for item in summaries
+    }
     return {
         "WildChat-1M": source_counts["WildChat-1M"],
         "LMSYS-Chat-1M": source_counts["LMSYS-Chat-1M"],
@@ -99,7 +117,9 @@ def _format_levels(counts: Counter[int], levels: tuple[int, ...]) -> str:
     return "<br/>".join(f"{LEVEL_LABELS[level]}: {counts[level]:,}" for level in levels)
 
 
-def _manual_snapshot(candidate_ids: set[str]) -> tuple[Counter[str], dict[str, Counter[int]], set[str]]:
+def _manual_snapshot(
+    candidate_ids: set[str],
+) -> tuple[Counter[str], dict[str, Counter[int]], set[str]]:
     outcomes: Counter[str] = Counter()
     levels = {label: Counter() for label in MANUAL_FILES}
     reviewed_ids: set[str] = set()
@@ -113,7 +133,9 @@ def _manual_snapshot(candidate_ids: set[str]) -> tuple[Counter[str], dict[str, C
             if conversation_id not in candidate_ids:
                 continue
             if conversation_id in reviewed_ids:
-                raise ValueError(f"Duplicate candidate manual review: {conversation_id}")
+                raise ValueError(
+                    f"Duplicate candidate manual review: {conversation_id}"
+                )
 
             assessment = record["assessment"]
             manual_label = assessment["classification"]
@@ -132,6 +154,14 @@ def _manual_snapshot(candidate_ids: set[str]) -> tuple[Counter[str], dict[str, C
 def _snapshot(*, audit_cutoff: int | None = None) -> dict:
     raw = _raw_counts()
     manifest = _read_json(CORPUS_MANIFEST)
+    raw.update(
+        {
+            dataset: int(count)
+            for dataset, count in manifest.get(
+                "expansion_source_record_counts", {}
+            ).items()
+        }
+    )
     included = {dataset: int(manifest["counts"][dataset]) for dataset in DATASET_ORDER}
     excluded = {dataset: raw[dataset] - included[dataset] for dataset in DATASET_ORDER}
 
@@ -147,13 +177,16 @@ def _snapshot(*, audit_cutoff: int | None = None) -> dict:
     automated_by_source = Counter(item["dataset"] for item in automated)
     recursive_counts = Counter(item["recursive_extension"] for item in automated)
     candidate_ids = {
-        item["id"] for item in automated if item["recursive_extension"] in {"clear", "potential"}
+        item["id"]
+        for item in automated
+        if item["recursive_extension"] in {"clear", "potential"}
     }
     if len(candidate_ids) != recursive_counts["clear"] + recursive_counts["potential"]:
         raise ValueError("Duplicate automated candidate IDs detected")
 
     not_audited = {
-        dataset: included[dataset] - automated_by_source[dataset] for dataset in DATASET_ORDER
+        dataset: included[dataset] - automated_by_source[dataset]
+        for dataset in DATASET_ORDER
     }
     if any(value < 0 for value in not_audited.values()):
         raise ValueError("Automated audit count exceeds the normalized corpus manifest")
@@ -201,7 +234,7 @@ def _diagram(snapshot: dict) -> str:
         '    subgraph ID["IDENTIFICATION AND CORPUS CONSTRUCTION"]',
         '        A["Public conversation records collected'
         f'<br/><b>n = {snapshot["raw_total"]:,}</b><br/><br/>{_format_source_counts(snapshot["raw"])}"]',
-        '        X1["Excluded: fewer than 10 user–assistant exchanges'
+        '        X1["Excluded: below 10×10 or exact duplicate'
         f'<br/><b>n = {snapshot["excluded_total"]:,}</b>"]',
         '        B["Normalized ≥10-user + ≥10-assistant corpus'
         f'<br/><b>n = {snapshot["included_total"]:,}</b><br/><br/>{_format_source_counts(snapshot["included"])}"]',
@@ -211,16 +244,16 @@ def _diagram(snapshot: dict) -> str:
         "",
         '    subgraph AS["AUTOMATED GEMMA V5 SCREENING"]',
         '        C["Conversations audited to date'
-        f'<br/><b>n = {snapshot["automated_total"]:,} / {snapshot["included_total"]:,}</b>'
-        f'<br/><br/>{_format_source_counts(snapshot["automated_by_source"], omit_zero=True)}'
+        f"<br/><b>n = {snapshot['automated_total']:,} / {snapshot['included_total']:,}</b>"
+        f"<br/><br/>{_format_source_counts(snapshot['automated_by_source'], omit_zero=True)}"
         f'<br/>Recorded errors: {snapshot["error_count"]:,}"]',
         '        X2["Not yet automatically audited'
         f'<br/><b>n = {snapshot["not_audited_total"]:,}</b><br/><br/>{_format_source_counts(snapshot["not_audited"], omit_zero=True)}"]',
         '        D["Automated none—not selected for candidate review'
         f'<br/><b>n = {snapshot["automated_none"]:,}</b>"]',
         '        E["Automated clear or potential candidates'
-        f'<br/><b>n = {snapshot["candidate_total"]:,}</b>'
-        f'<br/><br/>Potential: {snapshot["automated_potential"]:,}'
+        f"<br/><b>n = {snapshot['candidate_total']:,}</b>"
+        f"<br/><br/>Potential: {snapshot['automated_potential']:,}"
         f'<br/>Clear: {snapshot["automated_clear"]:,}"]',
         "        B --> C",
         "        B -.-> X2",
@@ -230,9 +263,9 @@ def _diagram(snapshot: dict) -> str:
         "",
         '    subgraph MR["FULL-TRANSCRIPT MANUAL REVIEW"]',
         '        F["Automated candidates manually adjudicated'
-        f'<br/><b>n = {reviewed_total:,}</b>'
-        '<br/><br/>Complete conversation read'
-        '<br/>Strongest coherent chain reconstructed'
+        f"<br/><b>n = {reviewed_total:,}</b>"
+        "<br/><br/>Complete conversation read"
+        "<br/>Strongest coherent chain reconstructed"
         '<br/>Artifact recursion separated from self-extension"]',
         '        X3["Automated candidates awaiting manual review'
         f'<br/><b>n = {snapshot["manual_pending"]:,}</b>"]',
@@ -242,13 +275,13 @@ def _diagram(snapshot: dict) -> str:
         "",
         '    subgraph OUT["MANUALLY ADJUDICATED OUTCOMES"]',
         '        I["Clear recursive self-extension'
-        f'<br/><b>n = {manual_outcomes["clear"]:,}</b><br/><br/>'
+        f"<br/><b>n = {manual_outcomes['clear']:,}</b><br/><br/>"
         f'{_format_levels(manual_levels["clear"], (3, 4, 5))}"]',
         '        J["Potential extension'
-        f'<br/><b>n = {manual_outcomes["potential"]:,}</b><br/><br/>'
+        f"<br/><b>n = {manual_outcomes['potential']:,}</b><br/><br/>"
         f'{_format_levels(manual_levels["potential"], (1, 2, 3, 4, 5))}"]',
         '        K["None / hard negative'
-        f'<br/><b>n = {manual_outcomes["none"]:,}</b><br/><br/>'
+        f"<br/><b>n = {manual_outcomes['none']:,}</b><br/><br/>"
         f'{_format_levels(manual_levels["none"], (0,))}"]',
         "        F --> I",
         "        F --> J",
