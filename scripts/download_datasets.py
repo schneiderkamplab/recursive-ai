@@ -2,7 +2,7 @@
 """Download the public source corpora used by the consumer–AI audit.
 
 Downloads are pinned to dataset revisions and written to the directory layout
-expected by ``prepare_long_conversations.py``. Interrupted transfers resume from
+expected by the corpus-preparation scripts. Interrupted transfers resume from
 ``.part`` files. Hugging Face credentials are read from the process environment
 and are never written by this script.
 """
@@ -15,6 +15,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -68,6 +69,105 @@ def _wildchat_files() -> tuple[SourceFile, ...]:
     )
 
 
+def _wildchat_4_8m_files() -> tuple[SourceFile, ...]:
+    sizes = (
+        125_527_585,
+        120_499_402,
+        115_463_083,
+        111_331_332,
+        126_873_194,
+        114_861_320,
+        116_894_276,
+        119_347_100,
+        105_238_405,
+        106_372_202,
+        106_465_090,
+        102_841_742,
+        93_221_542,
+        129_110_204,
+        168_003_355,
+        188_687_810,
+        195_987_104,
+        156_064_968,
+        158_654_366,
+        175_368_628,
+        191_655_778,
+        182_873_201,
+        138_085_341,
+        134_695_370,
+        142_303_607,
+        162_745_428,
+        166_054_540,
+        185_259_420,
+        183_605_707,
+        169_848_284,
+        215_958_271,
+        140_234_157,
+        129_753_926,
+        72_070_510,
+        80_445_922,
+        144_345_325,
+        121_529_823,
+        106_094_815,
+        91_029_244,
+        132_314_808,
+        112_325_169,
+        85_601_395,
+        100_908_554,
+        134_836_162,
+        178_996_989,
+        71_012_685,
+        163_609_724,
+        116_124_638,
+        221_199_791,
+        103_170_595,
+        142_241_146,
+        156_188_404,
+        217_887_036,
+        204_207_011,
+        190_323_883,
+        160_219_119,
+        192_970_337,
+        69_567_568,
+        268_021_931,
+        63_544_556,
+        70_833_528,
+        97_859_176,
+        97_674_635,
+        84_508_864,
+        129_959_637,
+        86_476_263,
+        102_379_733,
+        166_945_361,
+        136_181_360,
+        113_771_808,
+        429_379_222,
+        443_104_768,
+        561_212_647,
+        350_815_505,
+        430_081_448,
+        203_068_659,
+        270_361_626,
+        239_863_313,
+        108_060_533,
+        276_821_905,
+        186_001_659,
+        234_968_053,
+        431_597_604,
+        507_065_268,
+        546_361_015,
+        496_266_956,
+    )
+    return tuple(
+        SourceFile(
+            remote_path=f"data/train-{index:05d}-of-00086.parquet",
+            local_name=f"train-{index:05d}-of-00086.parquet",
+            size=size,
+        )
+        for index, size in enumerate(sizes)
+    )
+
+
 DATASETS = {
     dataset.key: dataset
     for dataset in (
@@ -77,6 +177,13 @@ DATASETS = {
             revision="7d6490e462285cf85d91eabea0f9a954fbddcd1f",
             output_directory="wildchat",
             files=_wildchat_files(),
+        ),
+        Dataset(
+            key="wildchat-4.8m",
+            repository="allenai/WildChat-4.8M",
+            revision="c827c6df8fcf008219ffaffa4d1dd77491099367",
+            output_directory="wildchat_4_8m",
+            files=_wildchat_4_8m_files(),
         ),
         Dataset(
             key="lmsys",
@@ -136,6 +243,63 @@ DATASETS = {
                 ),
             ),
         ),
+        Dataset(
+            key="sharegpt-x",
+            repository="DSULT-Core/ShareGPT-X",
+            revision="65d708977cdf929f09734b0c1b25d8345d51d121",
+            output_directory="sharegpt_x",
+            files=(
+                SourceFile(
+                    "ChatGPT-Simple_ShareGPT_Full.json",
+                    "ChatGPT-Simple_ShareGPT_Full.json",
+                    1_492_229_945,
+                ),
+            ),
+        ),
+        Dataset(
+            key="prism",
+            repository="HannahRoseKirk/prism-alignment",
+            revision="18ab5cfb37456f4ec8cbc00212ce54cf7b1239f6",
+            output_directory="prism",
+            files=(
+                SourceFile("conversations.jsonl", "conversations.jsonl", 60_331_783),
+                SourceFile("metadata.jsonl", "metadata.jsonl", 85_080_000),
+                SourceFile("survey.jsonl", "survey.jsonl", 4_863_301),
+            ),
+        ),
+        Dataset(
+            key="sharechat",
+            repository="anoynsharechat/sharechat",
+            revision="6fb3e27bba4185e8c05f9b8b3c5ca972192ad036",
+            output_directory="sharechat",
+            files=(
+                SourceFile(
+                    "chatgpt_results_final_language_filtered.csv",
+                    "chatgpt.csv",
+                    2_289_475_894,
+                ),
+                SourceFile(
+                    "claude_results_final_language_filtered.csv",
+                    "claude.csv",
+                    282_846_983,
+                ),
+                SourceFile(
+                    "gemini_results_final_language_filtered.csv",
+                    "gemini.csv",
+                    112_104_516,
+                ),
+                SourceFile(
+                    "grok_results_final_language_filtered.csv",
+                    "grok.csv",
+                    1_094_604_743,
+                ),
+                SourceFile(
+                    "perplexity_results_final_language_filtered.csv",
+                    "perplexity.csv",
+                    221_594_825,
+                ),
+            ),
+        ),
     )
 }
 
@@ -148,7 +312,9 @@ def _resolve_url(dataset: Dataset, source_file: SourceFile) -> str:
     repository = urllib.parse.quote(dataset.repository, safe="/")
     revision = urllib.parse.quote(dataset.revision, safe="")
     remote_path = urllib.parse.quote(source_file.remote_path, safe="/")
-    return f"https://huggingface.co/datasets/{repository}/resolve/{revision}/{remote_path}"
+    return (
+        f"https://huggingface.co/datasets/{repository}/resolve/{revision}/{remote_path}"
+    )
 
 
 def _request(url: str, token: str | None, offset: int) -> urllib.request.Request:
@@ -194,7 +360,9 @@ def _download_file(
         )
     if offset == source_file.size:
         partial.replace(destination)
-        print(f"{dataset.key}/{source_file.local_name}: completed from existing partial")
+        print(
+            f"{dataset.key}/{source_file.local_name}: completed from existing partial"
+        )
         return
 
     url = _resolve_url(dataset, source_file)
@@ -216,7 +384,9 @@ def _download_file(
         if offset and response.status != 206:
             # A server that ignores Range must be restarted rather than appended.
             partial.unlink(missing_ok=True)
-            return _download_file(dataset, source_file, raw_directory, token, force=False)
+            return _download_file(
+                dataset, source_file, raw_directory, token, force=False
+            )
 
         mode = "ab" if offset else "wb"
         transferred = offset
@@ -278,6 +448,12 @@ def main() -> None:
         help="Replace complete or partial files instead of resuming/skipping them.",
     )
     parser.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="Parallel file downloads (default: 1). Each file remains independently resumable.",
+    )
+    parser.add_argument(
         "--list",
         action="store_true",
         help="Print the pinned inventory and exit without downloading.",
@@ -289,12 +465,26 @@ def main() -> None:
     if args.list:
         _print_inventory(datasets, raw_directory)
         return
+    if args.workers < 1:
+        parser.error("--workers must be at least 1")
 
     token = _token()
     for dataset in datasets:
         print(f"Downloading {dataset.repository}@{dataset.revision}")
-        for source_file in dataset.files:
-            _download_file(dataset, source_file, raw_directory, token, args.force)
+        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+            futures = [
+                executor.submit(
+                    _download_file,
+                    dataset,
+                    source_file,
+                    raw_directory,
+                    token,
+                    args.force,
+                )
+                for source_file in dataset.files
+            ]
+            for future in futures:
+                future.result()
 
     print("All selected dataset files are complete and byte-size verified.")
 

@@ -21,6 +21,11 @@ The pipeline uses pinned releases of:
 - ThoughtTrace; and
 - the public 600-conversation ChatGPT-RealUser-2.2M preview.
 
+A separately versioned expansion integrates ShareGPT-X, PRISM Alignment, and
+ShareChat. WildChat-4.8M is downloaded and compared with the existing
+WildChat-1M partition before any later inclusion. None of these records is
+silently mixed into the completed 44,142-record v5 campaign.
+
 The unavailable full RealUser-2.2M corpus is not used. Dataset licenses, terms,
 and access controls remain those of the upstream publishers. LMSYS may require
 accepting its terms and supplying a Hugging Face token through the process
@@ -64,6 +69,16 @@ python -m pip install -r requirements.txt
    python scripts/prepare_long_conversations.py
    ```
 
+   To build the separate additional-source expansion and assess the successor
+   WildChat release:
+
+   ```bash
+   python scripts/download_datasets.py --dataset sharegpt-x --dataset prism --dataset sharechat --workers 4
+   python scripts/prepare_corpus_expansion.py
+   python scripts/download_datasets.py --dataset wildchat-4.8m --workers 4
+   python scripts/assess_wildchat_expansion.py
+   ```
+
 4. Start Ollama with the required model available, then run the v5 audit:
 
    ```bash
@@ -74,6 +89,10 @@ python -m pip install -r requirements.txt
    temperature 0, seed `20260824`, and compact schema-constrained JSON. It was
    operated under a 60 GB memory ceiling. Do not run two processes that append
    to the same output file.
+
+   The audit accepts `--input` for a versioned expansion, but a non-default
+   input requires explicit separate `--output` and `--errors` paths. This guard
+   prevents appending expansion results to the canonical v5 JSONL.
 
 5. Human reviewers adjudicate all automated `clear` and `potential` candidates
    according to [`wiki/workflow/manual-review.md`](wiki/workflow/manual-review.md).

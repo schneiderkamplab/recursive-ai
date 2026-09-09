@@ -16,8 +16,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INPUT = ROOT / "classification" / "long_conversations_10x10.jsonl.gz"
-DEFAULT_OUTPUT = ROOT / "classification" / "gemma4_26b_a4b_audit_v5_extension_levels.jsonl"
-ERROR_OUTPUT = ROOT / "classification" / "gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl"
+DEFAULT_OUTPUT = (
+    ROOT / "classification" / "gemma4_26b_a4b_audit_v5_extension_levels.jsonl"
+)
+ERROR_OUTPUT = (
+    ROOT / "classification" / "gemma4_26b_a4b_audit_v5_extension_levels_errors.jsonl"
+)
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL = "gemma4:26b"
 MODEL_CONTEXT_TOKENS = 131_072
@@ -32,7 +36,17 @@ LEVEL_NAMES = {
     4: "reflexive_extension",
     5: "enacted_extension",
 }
-CONTEXTS = ["personal", "relational", "educational", "entrepreneurial", "occupational", "creative", "health", "mixed", "other"]
+CONTEXTS = [
+    "personal",
+    "relational",
+    "educational",
+    "entrepreneurial",
+    "occupational",
+    "creative",
+    "health",
+    "mixed",
+    "other",
+]
 LOCUS_LEVELS = {
     "none": 0,
     "capability": 1,
@@ -44,7 +58,24 @@ LOCUS_LEVELS = {
 
 FIRST_SCHEMA = {
     "type": "object",
-    "required": ["c", "k", "g", "h", "he", "e", "a", "ae", "u", "ue", "x", "xe", "d", "z", "r", "q"],
+    "required": [
+        "c",
+        "k",
+        "g",
+        "h",
+        "he",
+        "e",
+        "a",
+        "ae",
+        "u",
+        "ue",
+        "x",
+        "xe",
+        "d",
+        "z",
+        "r",
+        "q",
+    ],
     "properties": {
         "c": {"type": "string", "enum": ["yes", "no", "uncertain"]},
         "k": {"type": "string", "enum": CONTEXTS},
@@ -67,7 +98,25 @@ FIRST_SCHEMA = {
 
 FOLLOW_SCHEMA = {
     "type": "object",
-    "required": ["f", "c", "k", "g", "h", "he", "e", "a", "ae", "u", "ue", "x", "xe", "d", "z", "r", "q"],
+    "required": [
+        "f",
+        "c",
+        "k",
+        "g",
+        "h",
+        "he",
+        "e",
+        "a",
+        "ae",
+        "u",
+        "ue",
+        "x",
+        "xe",
+        "d",
+        "z",
+        "r",
+        "q",
+    ],
     "properties": {
         "f": {"type": "string", "enum": ["confirm", "reject", "mixed"]},
         "c": {"type": "string", "enum": ["yes", "no", "uncertain"]},
@@ -150,7 +199,10 @@ def _message_segments(record: dict) -> list[str]:
         if not content:
             segments.append(f"[{label}] ")
             continue
-        pieces = [content[index : index + content_limit] for index in range(0, len(content), content_limit)]
+        pieces = [
+            content[index : index + content_limit]
+            for index in range(0, len(content), content_limit)
+        ]
         total = len(pieces)
         for part, piece in enumerate(pieces, 1):
             suffix = f" part {part}/{total}" if total > 1 else ""
@@ -207,7 +259,12 @@ def _request(prompt: str, schema: dict, max_output_tokens: int) -> tuple[dict, d
                 "prompt_tokens": raw.get("prompt_eval_count") or 0,
                 "output_tokens": raw.get("eval_count") or 0,
             }
-        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, KeyError) as error:
+        except (
+            urllib.error.URLError,
+            TimeoutError,
+            json.JSONDecodeError,
+            KeyError,
+        ) as error:
             last_error = error
             time.sleep(2**attempt)
     raise RuntimeError(f"Gemma request failed after retries: {last_error}")
@@ -268,10 +325,13 @@ def _audit(record: dict) -> dict:
         "xe": r"U[1-9][0-9]*",
     }
     valid_evidence = {
-        key: bool(re.fullmatch(pattern, assessment[key])) and assessment[key] in turn_positions
+        key: bool(re.fullmatch(pattern, assessment[key]))
+        and assessment[key] in turn_positions
         for key, pattern in evidence_patterns.items()
     }
-    externalization = assessment["h"] == "strong" and assessment["e"] and valid_evidence["he"]
+    externalization = (
+        assessment["h"] == "strong" and assessment["e"] and valid_evidence["he"]
+    )
     ai_reflection = externalization and assessment["a"] and valid_evidence["ae"]
     user_uptake = ai_reflection and assessment["u"] and valid_evidence["ue"]
     recursive_reentry = user_uptake and assessment["x"] and valid_evidence["xe"]
@@ -288,12 +348,22 @@ def _audit(record: dict) -> dict:
     model_locus = assessment["g"]
     model_level = LOCUS_LEVELS[model_locus]
     normalized_level = model_level if externalization else 0
-    clear_eligible = normalized_level >= 3 and all(stage_values[:4]) and all(
-        turn_positions[left] < turn_positions[right]
-        for left, right in zip(evidence_labels, evidence_labels[1:])
+    clear_eligible = (
+        normalized_level >= 3
+        and all(stage_values[:4])
+        and all(
+            turn_positions[left] < turn_positions[right]
+            for left, right in zip(evidence_labels, evidence_labels[1:])
+        )
     )
-    potential_eligible = normalized_level >= 1 and externalization and (
-        ai_reflection or normalized_stages["delegation"] or model_recursive == "potential"
+    potential_eligible = (
+        normalized_level >= 1
+        and externalization
+        and (
+            ai_reflection
+            or normalized_stages["delegation"]
+            or model_recursive == "potential"
+        )
     )
     if clear_eligible:
         recursive = "clear"
@@ -370,6 +440,7 @@ def _completed(path: Path) -> set[str]:
 def main() -> None:
     global MODEL
     parser = argparse.ArgumentParser()
+    parser.add_argument("--input", type=Path, default=INPUT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--errors", type=Path, default=ERROR_OUTPUT)
     parser.add_argument("--limit", type=int)
@@ -377,11 +448,18 @@ def main() -> None:
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--id", action="append", dest="ids")
     args = parser.parse_args()
+    if args.input != INPUT and (
+        args.output == DEFAULT_OUTPUT or args.errors == ERROR_OUTPUT
+    ):
+        parser.error(
+            "A non-default --input requires separate explicit --output and --errors paths"
+        )
     MODEL = args.model
     args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.errors.parent.mkdir(parents=True, exist_ok=True)
     done = _completed(args.output)
     records = []
-    with gzip.open(INPUT, "rt", encoding="utf-8") as source:
+    with gzip.open(args.input, "rt", encoding="utf-8") as source:
         for line in source:
             record = json.loads(line)
             if args.ids and record["id"] not in args.ids:
@@ -396,19 +474,39 @@ def main() -> None:
     started = time.monotonic()
     processed = 0
     failed = 0
-    with args.output.open("a", encoding="utf-8") as target, args.errors.open("a", encoding="utf-8") as errors:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
-            future_to_record = {executor.submit(_audit, record): record for record in records}
+    with (
+        args.output.open("a", encoding="utf-8") as target,
+        args.errors.open("a", encoding="utf-8") as errors,
+    ):
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=args.workers
+        ) as executor:
+            future_to_record = {
+                executor.submit(_audit, record): record for record in records
+            }
             for future in concurrent.futures.as_completed(future_to_record):
                 record = future_to_record[future]
                 try:
                     result = future.result()
-                except Exception as error:  # Preserve failures separately for retry and auditability.
-                    errors.write(json.dumps({"id": record["id"], "dataset": record["dataset"], "error": str(error)}) + "\n")
+                except (
+                    Exception
+                ) as error:  # Preserve failures separately for retry and auditability.
+                    errors.write(
+                        json.dumps(
+                            {
+                                "id": record["id"],
+                                "dataset": record["dataset"],
+                                "error": str(error),
+                            }
+                        )
+                        + "\n"
+                    )
                     errors.flush()
                     failed += 1
                     continue
-                target.write(json.dumps(result, ensure_ascii=False, separators=(",", ":")) + "\n")
+                target.write(
+                    json.dumps(result, ensure_ascii=False, separators=(",", ":")) + "\n"
+                )
                 target.flush()
                 processed += 1
                 elapsed = time.monotonic() - started
