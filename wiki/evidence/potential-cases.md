@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through final v5 record 44,142
+
+The final 72-candidate round retains 66 potentials: L1=40, L2=23, L3=1, and L4=2. Capability cases include travel, study, coping, consumer choice, software assistance, and relationship advice; project cases include owned books, stories, mods, software systems, ventures, research, and a household budget. The sole L3 boundary (`cd0123397572de8315cd0ed3`) contains direct correction and AI acceptance of the user's actual gender identity but no later reuse of the accepted representation. Two L4 boundaries concern a failed cognitive-training assessment (`15abdcdf876adc96f81b60f6`) and an unsupported AI reframing of romantic invisibility (`a0921ca204a3386793d0d22e`); neither supplies the full four-stage chain.
+
+Several automated high-level cases were reduced after full-transcript review. Generic questions about psoriasis (`964c5e9b4e8fb4f433bd4b3c`) and urinary symptoms (`41762df87fceeabf41492c9a`) extend health deliberation but do not create or recursively apply a self-formulation. A family-finance conversation (`9916bc0d224ea9ddf09af159`) is a strong L2 budgeting arrangement rather than L4 reflexivity. An electronic-girlfriend role configuration (`2dcf64b4cd1d78baf5c70998`) supplies consumed companionship but does not represent or revise the actual user's self.
+
 # Potentials added through v5 record 43,541
 
 The 100-candidate round retains 86 potentials: L1=51, L2=29, L3=4, and L4=2. Lower-level cases span education, health, consumer choice, legal and workplace advice, research, software, CV work, creative production, books, channels, ventures, organizational development, and product configuration. This distribution reflects the broad consumer scope while keeping the theoretical levels tied to process evidence rather than domain.

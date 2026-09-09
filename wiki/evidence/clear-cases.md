@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through final v5 record 44,142
+
+The final 72-candidate round adds three clear cases: one L4 reflexive extension and two L5 enacted or possible-self extensions. In `5b4e22170f7a0b570b237d86`, a consumer accepts and tests the AI's reframing of breakup-related self-blame, applies successive replacement statements to concrete self-accusations, and reports the self-critical voice falling from seven to four and feeling lighter. This is L4 because the interaction changes self-appraisal without configuring a consequential new course of action.
+
+Two cases reach L5 through intended application. In `197fbd9fecffced66e3671e0`, the AI reframes repeated belief in a lying partner as damaged self-trust, helps construct a boundary script and first-person journal, and the user applies the formulation to an intended conditional departure. In `d0ca715a8d2bd8b03f838611`, a consumer who reports using AI for nine of ten decisions adopts the AI's “think first, then ask” rule and immediately restates it as a principle for future AI consumption. Both show accepted AI-mediated self-understanding organizing intended conduct; neither classification requires proof of later offline completion.
+
 # Clear cases added through v5 record 43,541
 
 The 100-candidate round adds four clear cases: two L4 reflexive extensions and two L5 enacted or possible-self extensions. The strongest finding is a linked cross-conversation trajectory. In `42b3edb24a5dbbd6b20aedea`, a consumer externalizes social anxiety, introversion, tastes, and travel aspirations; develops confident-business and arts-oriented persona variants with AI; explicitly saves the AI formulation; and applies it to low-stakes Berlin rehearsal. In `06401a2c3e83e12ddbd731ef`, the same consumer imports that summary, further calibrates speech and posture, applies the persona to a consequential meeting, reports the outcome, and commits to continued use. The first case is L5 because accepted AI configuration already organizes intended conduct; the later report strengthens the mechanism rather than defining it.

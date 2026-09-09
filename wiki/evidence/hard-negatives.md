@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negatives added through final v5 record 44,142
+
+Three candidates were assigned L0/none. `9dd96f2f51e1d8e9c4b15bab` is an explicit fictional transformation narrative, while `2574ca5e09b2906411d9b512` shifts from co-created fiction into explicitly announced role-play as its protagonist; in both, apparent self-development belongs to a stipulated character. Automated-clear `568f08ba1ace0efb525df0cd` is a long Chinese-to-Vietnamese subtitle-translation task whose characters, decisions, and marketplace events occur entirely inside source text. These cases reinforce referent verification: length, first-person grammar, correction, and continuity do not establish consumer self-extension.
+
 # Hard negatives added through v5 record 43,541
 
 Ten candidates were assigned L0/none. Six are explicit fictional or sexual role-play processes whose first-person continuity belongs to stipulated characters (`0aba6bd866b678aeea092902`, `aff49f80db298796c059c2f4`, `62d22040897ec1a6ca5214a0`, `b15e399bfcfa4354985a3154`, `095090a64d8ac9464d615500`, and `38a3e4221e2ba36f123c231c`). Two are model or memory experiments rather than consumer extension (`d4aa8ee6b3c1bf984460007e`, `2b209a84902eac262e0d8d4b`); one is a prompt-classification benchmark (`1c0d5712105861da2c55138c`); and one is adversarial harmful-goal prompting without a defensible extension process (`7bbc47bd0c63819d840c64dc`). The coding does not infer hidden identity or preference from role-play content.
