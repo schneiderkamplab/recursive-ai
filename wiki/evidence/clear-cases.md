@@ -11,6 +11,14 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 42,034
+
+The 230-candidate round adds nine clear cases: two L3 representations, four L4 reflexive extensions, and three L5 enacted or possible-self extensions. L3 cases concern a recursively negotiated customer-success self-pitch and preferred role (`3b51212d75af865ab4e24dd9`) and a corrected first-person account of a painful friendship and family episode (`9790fcc721cfd962acc27359`).
+
+The four L4 cases show AI assessment entering subsequent self-directed inquiry: meditation-related personality risks (`17f810e29a880ee8166464fc`), a corrected confidence-interval competence assessment (`8d3571cf8fe29f2a4d11ef42`), a corrected AWS quiz performance record (`fd1598a240f34c5a1cff5c13`), and social-conversation feedback explicitly carried into new interaction dilemmas (`50f66be2bda2d44b7938bc9`).
+
+Three L5 cases configure consequential intended arrangements. The AI integrates varied capabilities into an event-planner/facilitator possible self that the consumer develops into courses, retreats, markets, and career steps (`0c488528c42478daa05dcd12`). Another consumer turns lived mental-health experience into a proposed AI-and-mental-health venture, training plan, and six-month schedule (`74cb97d0fb113c40a34dc5`). A Japan traveler adopts and operationalizes an age-, life-stage-, and consent-sensitive dating rule for anticipated encounters (`7fe7f31df47317ac2d827652`). These are coded from accepted and applied possible-self formulations; they do not depend on independently verified offline completion.
+
 # Clear cases added through v5 record 39,219
 
 The 44-candidate round adds four clear L3 representations and one clear L4 reflexive extension. In `dbdf15893ea616d2a63de37d`, the consumer iteratively develops resume language and adopts the AI-corrected label “engineer by day, tinkerer by night.” In `038fbccaec76eace69c0e440`, a socially anxious consumer repeatedly calibrates condolence language to a short, non-flowery personal voice, commits to a formulation, and carries that calibrated voice into a new group message. In `d34e9716924d4c520a749925`, AI-generated Instagram captions become a recursively negotiated public representation of the consumer's own yoga practice and worldview; the consumer ultimately recombines the developed language into their own caption draft. In `2fd58b3115c7b50ccdf3ce56`, AI-rewritten descriptions of the consumer's asphalt research are constrained, reused, and applied to further CV entries.

@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 42,034
+
+The 230-candidate round retains 200 potentials: L1=75, L2=108, L3=12, and L4=5. Capability and owned-project cases span educational, occupational, technical, creative, personal, health, relational, and entrepreneurial consumption. The broad consumer scope keeps those settings eligible while requiring stronger self-proximity and a completed four-stage chain for a clear result.
+
+Higher-level boundaries include actual-user CV, LinkedIn, biography, workplace-achievement, relational-aspiration, and family representations that end before a particular AI-produced formulation is accepted and reused. Reflexive potentials include self-disguised or uncertain diagnostic material, disputed soulmate and personality formulations, work-stress interpretation, and a learned-helplessness hypothesis; each lacks distinct uptake and recursive re-entry. The retained boundary set therefore separates personalized or identity-adjacent assistance from demonstrated recursive extension without excluding users who consume AI through work, study, or enterprise.
+
 # Potentials added through v5 record 39,219
 
 The 44-candidate round retains 35 potentials: L1=12, L2=16, L3=6, and L5=1. Capability extensions span health and emotional support, language and mathematics learning, consumer technology choice, creative audience building, research critique, and rhetorical training. Owned projects include software, scholarly writing, a lecture, credit scoring, a pyrometer company, a gaming studio, a mobile garden, and a Decentraland assistant.

@@ -11,6 +11,10 @@ sources:
     title: Manually reviewed none examples
 ---
 
+# Hard negatives added through v5 record 42,034
+
+Twenty-one candidates were assigned L0/none. The dominant errors are extended fictional or sexual role-play, explicitly invented third parties, fantasy transformations, assistant-persona identity development, and AI-awareness recursion. Other negatives are impersonal prompt tests or incoherent exchanges. Several automated clears were reduced for precisely this reason: rich first-person continuity, correction, or apparent self-development belonged to a stipulated character or to the AI rather than to the actual consumer. The round reinforces referent verification before any self-extension claim; no sensitive attribute is inferred from role-play content.
+
 # Hard negatives added through v5 record 39,219
 
 Four candidates were assigned L0/none. Automated-clear `1d658a0c23a5570c448b6c22` repeatedly transforms the assistant into therapeutic, divine, and fictional personas; the user's one late enlightenment question has no later uptake. Conversation `6c9c178562337321bc1b476a` similarly creates and transfers an Antonio Rayo assistant persona rather than representing the consumer. Conversation `e97547473d17dd5df7c6e6f5` is impersonal news summarization whose apparently personal and entrepreneurial referents belong to quoted articles. Conversation `1c06e62e8656ff028606b35c` uses a fictional condition as adversarial scaffolding for abusive language. Together they reinforce checks on self-referent, source-text referent, and prompt-scaffolding errors.
