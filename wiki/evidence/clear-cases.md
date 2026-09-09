@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed clear examples
 ---
 
+# Clear cases added through v5 record 43,541
+
+The 100-candidate round adds four clear cases: two L4 reflexive extensions and two L5 enacted or possible-self extensions. The strongest finding is a linked cross-conversation trajectory. In `42b3edb24a5dbbd6b20aedea`, a consumer externalizes social anxiety, introversion, tastes, and travel aspirations; develops confident-business and arts-oriented persona variants with AI; explicitly saves the AI formulation; and applies it to low-stakes Berlin rehearsal. In `06401a2c3e83e12ddbd731ef`, the same consumer imports that summary, further calibrates speech and posture, applies the persona to a consequential meeting, reports the outcome, and commits to continued use. The first case is L5 because accepted AI configuration already organizes intended conduct; the later report strengthens the mechanism rather than defining it.
+
+The L4 cases broaden reflexive extension beyond assessment. In `d72f64a8e29de42737bef974`, a night-shift consumer takes up the AI's restorative reframing of an imagined responsibility-free refuge and reapplies it to a productivity-based self-understanding. In Russian-language conversation `77586ce23ac183bbdf2f4763`, a consumer recursively develops a personal philosophy of life's purpose by incorporating and contesting AI formulations about ideals, values, comfort, and subjective meaning. The latter is retained conservatively because the AI language is generic, but the user's uptake and re-entry are direct and self-referential.
+
 # Clear cases added through v5 record 42,034
 
 The 230-candidate round adds nine clear cases: two L3 representations, four L4 reflexive extensions, and three L5 enacted or possible-self extensions. L3 cases concern a recursively negotiated customer-success self-pitch and preferred role (`3b51212d75af865ab4e24dd9`) and a corrected first-person account of a painful friendship and family episode (`9790fcc721cfd962acc27359`).

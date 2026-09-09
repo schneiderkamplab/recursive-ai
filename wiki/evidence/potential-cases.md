@@ -11,6 +11,12 @@ sources:
     title: Manually reviewed potential examples
 ---
 
+# Potentials added through v5 record 43,541
+
+The 100-candidate round retains 86 potentials: L1=51, L2=29, L3=4, and L4=2. Lower-level cases span education, health, consumer choice, legal and workplace advice, research, software, CV work, creative production, books, channels, ventures, organizational development, and product configuration. This distribution reflects the broad consumer scope while keeping the theoretical levels tied to process evidence rather than domain.
+
+Four L3 boundaries concern a self-centered past/present video archive (`26a8c859348304c4df62308c`), an entrepreneurial niche assessment synthesized from interests and desired lifestyle (`87d737f40ee6bb3af2b372db`), negotiated CV representation of academic distinction (`8da9392d816fcf323628af5d`), and anticipated legal representation of character and neurodivergence (`20fe7fde37574af045f706c9`). Two L4 boundaries concern psychiatric-treatment meaning (`4e0e15255f7b17d80ecbc635`) and a psychedelic technological worldview (`8af09bd2a75660c63218bcf6`). Each contains self-proximate material but lacks a directly evidenced, distinct acceptance and later reuse of a particular AI-derived formulation.
+
 # Potentials added through v5 record 42,034
 
 The 230-candidate round retains 200 potentials: L1=75, L2=108, L3=12, and L4=5. Capability and owned-project cases span educational, occupational, technical, creative, personal, health, relational, and entrepreneurial consumption. The broad consumer scope keeps those settings eligible while requiring stronger self-proximity and a completed four-stage chain for a clear result.
