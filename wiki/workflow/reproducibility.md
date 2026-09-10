@@ -38,10 +38,11 @@ python scripts/prepare_long_conversations.py
 ```bash
 python scripts/audit_long_conversations_gemma.py \
   --model gemma4:26b \
-  --workers 4
+  --workers 4 \
+  --schedule length
 ```
 
-The default output and error paths are documented in [source files](/references/source-files.md). Existing completed IDs are skipped.
+The default output and error paths are documented in [source files](/references/source-files.md). Existing completed IDs are skipped. `length` is the default and deterministically schedules the longest normalized records first; use `--schedule source` to reproduce the earlier corpus order.
 
 # Targeted calibration
 

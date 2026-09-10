@@ -18,15 +18,26 @@ sources:
 
 The active audit uses local Ollama model `gemma4:26b`, four worker threads, four 131,072-token contexts, temperature 0, seed `20260824`, thinking disabled, and schema-constrained JSON output. Requests keep the model alive for 30 minutes, allow 1,800 seconds, and retry up to three times with exponential backoff.[^audit-script]
 
+Pending records are deterministically scheduled by decreasing normalized
+character count, with dataset and conversation ID as tie-breakers. Starting
+costly records first balances the four worker lanes and reduces tail
+stragglers. This changes execution order only: prompt, schema, model, seed,
+post-processing, and append-only resumption are unchanged. The legacy
+corpus-order policy remains available as `--schedule source`. A matched
+eight-record benchmark found 176.1 records/hour longest-first versus 151.3 in
+source order; shortest-first was rejected at 138.2 records/hour. See the
+[backend and scheduling benchmark](backend-benchmark.md).
+
 # Pipeline
 
 1. Read each normalized conversation not already present in the output.
-2. Render stable user and assistant turn labels.
-3. Apply the [v5 prompt](/prompts/v5-audit-prompt.md) using the [chunking protocol](/prompts/chunking-and-continuation.md).
-4. Validate evidence roles and existence.
-5. Normalize levels, stages, recursive labels, and review priority according to the [output contract](/prompts/output-contract.md).
-6. Append one compact JSON object per completed conversation and flush immediately.
-7. Append request failures to a separate error JSONL for later retry.
+2. Order pending records with the selected deterministic scheduling policy.
+3. Render stable user and assistant turn labels.
+4. Apply the [v5 prompt](/prompts/v5-audit-prompt.md) using the [chunking protocol](/prompts/chunking-and-continuation.md).
+5. Validate evidence roles and existence.
+6. Normalize levels, stages, recursive labels, and review priority according to the [output contract](/prompts/output-contract.md).
+7. Append one compact JSON object per completed conversation and flush immediately.
+8. Append request failures to a separate error JSONL for later retry.
 
 # Resumption
 

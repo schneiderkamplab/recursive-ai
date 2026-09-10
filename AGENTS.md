@@ -22,7 +22,9 @@ overrides automated labels.
 changes require a new measurement version and new output files. Preserve audit
 outputs append-only, failures separately, and never run two writers against the
 same output. The agreed production ceiling is 60 GB RAM with four workers and
-four 131,072-token contexts.
+four 131,072-token contexts. Pending records use the deterministic `length`
+schedule: longest normalized transcripts first, with dataset and ID tie-breaks.
+`--schedule source` preserves the earlier corpus-order policy for comparison.
 
 Never commit or reproduce raw transcripts, normalized conversations,
 credentials, model blobs, logs, temporary checkpoints, or generated artifacts.

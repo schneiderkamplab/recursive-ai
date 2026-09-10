@@ -8,6 +8,7 @@ import concurrent.futures
 import gzip
 import json
 import re
+import statistics
 import time
 import urllib.error
 import urllib.request
@@ -28,6 +29,7 @@ MODEL_CONTEXT_TOKENS = 131_072
 # Conservative for multilingual text: at most one Unicode character per token,
 # leaving >16K tokens for rubric, markup, and output.
 MAX_CHUNK_CHARACTERS = 115_000
+DEFAULT_SCHEDULE = "length"
 LEVEL_NAMES = {
     0: "instrumental_task",
     1: "capability_extension",
@@ -437,6 +439,30 @@ def _completed(path: Path) -> set[str]:
     return identifiers
 
 
+def _scheduled(records: list[dict], schedule: str) -> list[dict]:
+    """Return records in a deterministic order suited to parallel inference.
+
+    Ollama batches active decode streams. Mixing a very long prompt with much
+    shorter prompts can make the short requests wait on the long request. A
+    stable longest-first ordering starts costly prompts together and lets
+    shorter prompts fill worker slots as they become available. This reduces
+    the risk that the campaign ends with a few long-running stragglers. It does
+    not alter prompts or classifications.
+    """
+    if schedule == "source":
+        return records
+    if schedule == "length":
+        return sorted(
+            records,
+            key=lambda record: (
+                -record.get("characters", 0),
+                record["dataset"],
+                record["id"],
+            ),
+        )
+    raise ValueError(f"Unknown schedule: {schedule}")
+
+
 def main() -> None:
     global MODEL
     parser = argparse.ArgumentParser()
@@ -445,6 +471,15 @@ def main() -> None:
     parser.add_argument("--errors", type=Path, default=ERROR_OUTPUT)
     parser.add_argument("--limit", type=int)
     parser.add_argument("--workers", type=int, default=4)
+    parser.add_argument(
+        "--schedule",
+        choices=("length", "source"),
+        default=DEFAULT_SCHEDULE,
+        help=(
+            "length schedules the longest prompts first to balance parallel "
+            "work; source preserves corpus order"
+        ),
+    )
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--id", action="append", dest="ids")
     args = parser.parse_args()
@@ -469,7 +504,23 @@ def main() -> None:
             records.append(record)
             if args.limit and len(records) >= args.limit:
                 break
-    print(json.dumps({"pending": len(records), "workers": args.workers}), flush=True)
+    records = _scheduled(records, args.schedule)
+    characters = [record.get("characters", 0) for record in records]
+    print(
+        json.dumps(
+            {
+                "pending": len(records),
+                "workers": args.workers,
+                "schedule": args.schedule,
+                "minimum_characters": min(characters) if characters else 0,
+                "median_characters": (
+                    round(statistics.median(characters)) if characters else 0
+                ),
+                "maximum_characters": max(characters) if characters else 0,
+            }
+        ),
+        flush=True,
+    )
 
     started = time.monotonic()
     processed = 0

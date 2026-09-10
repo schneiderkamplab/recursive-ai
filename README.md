@@ -89,6 +89,11 @@ python -m pip install -r requirements.txt
    operated under a 60 GB memory ceiling. Do not run two processes that append
    to the same output file.
 
+   Pending records are scheduled longest-first by their normalized character
+   count. This balances the four inference lanes and avoids leaving the most
+   expensive conversations as tail work. Pass `--schedule source` only to
+   reproduce the earlier corpus-order execution policy.
+
    The default command resumes the same append-only v5 JSONL. It recognizes the
    44,142 completed IDs and processes only pending additions. A genuinely
    alternate `--input` still requires explicit separate output and error paths.

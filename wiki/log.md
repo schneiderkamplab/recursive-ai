@@ -1,5 +1,11 @@
 # Bundle Update Log
 
+## 2026-09-10
+
+* **Optimization**: Added deterministic longest-first pending-record scheduling to the resumable v5 audit, retaining `--schedule source` for the earlier corpus-order policy. A clean matched eight-record benchmark measured 176.06 records/hour longest-first, 151.26 source-order, and 138.20 shortest-first; the rejected ascending policy was never deployed to the production output.
+* **Benchmark**: Compared four matched full-rubric ShareGPT-X prompts across canonical Ollama (67.23 records/hour), direct pinned llama.cpp `b8680` with Google's Q4_0 GGUF (61.49), and MLX-LM with a 4-bit checkpoint plus XGrammar schema enforcement (97.01). Unconstrained MLX was rejected because none of four outputs was schema-valid.
+* **Decision**: Retained Ollama for the ongoing v5 measurement despite MLX speed because the MLX and direct alternatives require different quantized artifacts and MLX disagreed materially with canonical classification on the matched sample. Backend substitution requires calibration and a separately versioned output; execution-order optimization does not alter the v5 instrument.
+
 ## 2026-09-09
 
 * **Expansion**: Expanded the canonical v5 corpus from 44,142 to 91,590 conversations under the unchanged v5 instrument. The original records remain the corpus prefix; exact-deduplicated additions comprise ShareGPT-X 8,910, PRISM 76, ShareChat 12,681, and WildChat-4.8M 25,781. Forty ShareChat-stage duplicates, 21,781 WildChat duplicates of the original corpus, and one further WildChat-stage duplicate were excluded.

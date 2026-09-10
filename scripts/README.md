@@ -8,7 +8,9 @@ Executable research utilities live here.
 - `download_datasets.py` downloads pinned public source releases.
 - `analyze_turn_distributions.py` profiles the raw datasets.
 - `prepare_long_conversations.py` normalizes and selects the 10-by-10 corpus.
-- `audit_long_conversations_gemma.py` runs or resumes the production v5 audit.
+- `audit_long_conversations_gemma.py` runs or resumes the production v5 audit;
+  its default longest-first schedule balances expensive prompts across the four
+  inference lanes, while `--schedule source` preserves corpus order.
 - `generate_process_diagram.py` derives the current screening and review flow.
 - `snapshot_resume_state.py` creates a private integrity-checked checkpoint.
 - `translate_appendix_conversations.py` builds a locked, resumable 26B Gemma
